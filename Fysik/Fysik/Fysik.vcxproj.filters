@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Sails">
+      <UniqueIdentifier>{43a2df92-f10e-464c-9ca8-4bedef0df9f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sails">
+      <UniqueIdentifier>{f2ce06e3-47fd-48c2-982a-0f2fc80e1e5e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicalObject.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicalObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Boat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Jib.cpp">
+      <Filter>Source Files\Sails</Filter>
+    </ClCompile>
+    <ClCompile Include="Sail.cpp">
+      <Filter>Source Files\Sails</Filter>
+    </ClCompile>
+    <ClCompile Include="SailMain.cpp">
+      <Filter>Source Files\Sails</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Vec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SailMain.h">
+      <Filter>Header Files\Sails</Filter>
+    </ClInclude>
+    <ClInclude Include="Jib.h">
+      <Filter>Header Files\Sails</Filter>
+    </ClInclude>
+    <ClInclude Include="Boat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sail.h">
+      <Filter>Header Files\Sails</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
