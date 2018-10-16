@@ -124,6 +124,7 @@
   <ItemGroup>
     <ClCompile Include="Boat.cpp" />
     <ClCompile Include="Jib.cpp" />
+    <ClCompile Include="Keel.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PhysicalObject.cpp" />
     <ClCompile Include="PhysicalObject.h" />
@@ -134,6 +135,7 @@
   <ItemGroup>
     <ClInclude Include="Boat.h" />
     <ClInclude Include="Jib.h" />
+    <ClInclude Include="Keel.h" />
     <ClInclude Include="Sail.h" />
     <ClInclude Include="SailMain.h" />
     <ClInclude Include="Vec.h" />

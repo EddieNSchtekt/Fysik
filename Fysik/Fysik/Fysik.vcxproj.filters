@@ -45,6 +45,9 @@
     <ClCompile Include="SailMain.cpp">
       <Filter>Source Files\Sails</Filter>
     </ClCompile>
+    <ClCompile Include="Keel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vec.h">
@@ -61,6 +64,9 @@
     </ClInclude>
     <ClInclude Include="Sail.h">
       <Filter>Header Files\Sails</Filter>
+    </ClInclude>
+    <ClInclude Include="Keel.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

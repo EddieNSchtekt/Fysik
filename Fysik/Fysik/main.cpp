@@ -8,7 +8,18 @@ int main()
 	shape.setFillColor(sf::Color::Green);
 	sf::Clock cl;
 
-	Boat o(100.0f,Vec(100.0f, 100.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15, 5,Vec(0.0,1.0,0.0)));
+	sf::Sprite bg;
+	sf::Texture bgTexture;
+	int bgSize = 200;
+	float keyFrame = 0;
+	if (!bgTexture.loadFromFile("Images/Background.png"))
+	{
+		//Error!
+	}
+	bg.setTexture(bgTexture);
+	bg.setTextureRect(sf::IntRect(0, 0, 200, 200));
+
+	Boat o(100.0f,Vec(100.0f, 100.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15, 5,Vec(0.0,1.0,0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1, 0.1, Vec(0.0, 1.0, 0.0)));
 
 
 	//PhysicalObject o(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f));
@@ -45,13 +56,18 @@ int main()
 			}
 		}
 		o.windCalc(t,Vec(5,5,0));
+		o.waterDragCalc(t);
 		float x = o.getPos().getX();
 		float y = o.getPos().getY();
 		system("CLS");
 		printf("X : %f\nY: %f", x, y);
 		shape.setPosition(x, y);
 
+		bg.setTextureRect(sf::IntRect(bgSize*((int)keyFrame%4), 0, 200, 200));
+		keyFrame += 0.01;
+
 		window.clear();
+		window.draw(bg);
 		window.draw(shape);
 		window.display();
 	}
