@@ -19,7 +19,7 @@ int main()
 	bg.setTexture(bgTexture);
 	bg.setTextureRect(sf::IntRect(0, 0, 200, 200));
 
-	Boat o(100.0f,Vec(100.0f, 100.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15, 5,Vec(0.0,1.0,0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1, 0.1, Vec(0.0, 1.0, 0.0)));
+	Boat o(100.0f,Vec(100.0f, 100.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15, 5,Vec(0.0, 1.0,0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1, 0.8, Vec(0.0, -1.0, 0.0)));
 
 
 	//PhysicalObject o(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f));
@@ -63,8 +63,8 @@ int main()
 		printf("X : %f\nY: %f", x, y);
 		shape.setPosition(x, y);
 
-		bg.setTextureRect(sf::IntRect(bgSize*((int)keyFrame%4), 0, 200, 200));
-		keyFrame += 0.01;
+		/*bg.setTextureRect(sf::IntRect(bgSize*((int)keyFrame%4), 0, 200, 200));
+		keyFrame += 0.1;*/
 
 		window.clear();
 		window.draw(bg);

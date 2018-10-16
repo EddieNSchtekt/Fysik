@@ -54,7 +54,8 @@ void Boat::windCalc(float time, Vec trueWind)
 	float dragForceLength = (float)DENSITY_AIR*drag*sails[0]->area()*(apparentWind).getLength();
 
 	Vec dragForce = apparentWind * (dragForceLength/apparentWind.getLength());
-	Vec liftForce = Vec(-apparentWind.getY(), apparentWind.getX())*(liftForceLength / apparentWind.getLength());
+	
+	Vec liftForce = Vec(apparentWind.getY(), -apparentWind.getX())*(liftForceLength / apparentWind.getLength());
 	
 	Vec res = liftForce + dragForce;
 
@@ -79,7 +80,7 @@ void Boat::waterDragCalc(float time)
 	float dragForceLength = (float)DENSITY_WATER*drag*keel->area()*(waterFlow).getLength();
 
 	Vec dragForce = waterFlow * (dragForceLength / waterFlow.getLength());
-	Vec liftForce = Vec(-waterFlow.getY(), waterFlow.getX())*(liftForceLength / waterFlow.getLength());
+	Vec liftForce = Vec(waterFlow.getY(), -waterFlow.getX())*(liftForceLength / waterFlow.getLength());
 
 	Vec res = liftForce + dragForce;
 
