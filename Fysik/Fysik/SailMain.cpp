@@ -13,7 +13,7 @@ float SailMain::CL(const Vec & apparentWind)
 {
 	float angle = this->angle.dot(apparentWind);
 	angle = angle / sqrt(((apparentWind.getX()*apparentWind.getX() + apparentWind.getY()*apparentWind.getY())*this->angle.getLength()));
-	angle = acos(angle)*360/(2* 3.14159265358979323846);
+	angle = acos(angle)*360/(2* PI);
 	angle = 180 - angle;
 	float res = 0;
 	if (angle < 100 && angle > 20)
@@ -36,7 +36,7 @@ float SailMain::CD(const Vec & apparentWind)
 {
 	float angle = this->angle.dot(apparentWind);
 	angle = angle / sqrt(((apparentWind.getX()*apparentWind.getX() + apparentWind.getY()*apparentWind.getY())*this->angle.getLength()));
-	angle = acos(angle) * 360 / (2 * 3.14159265358979323846);
+	angle = acos(angle) * 360 / (2 * PI);
 	angle = 180 - angle;
 	float res = 0;
 

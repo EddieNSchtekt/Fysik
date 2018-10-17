@@ -1,6 +1,9 @@
 #ifndef VEC_H
 #define VEC_H
 #include <math.h>
+
+#define PI 3.14159265358979323846
+
 class Vec
 {
 private:
