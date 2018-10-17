@@ -11,6 +11,12 @@ void PhysicalObject::update(float t)
 {
 	pos += vel * t;
 	vel += acc * t;
+	pos.setZ(0);
+	pos.getLength();
+	vel.setZ(0);
+	vel.getLength();
+	acc.setZ(0);
+	acc.getLength();
 }
 
 Vec PhysicalObject::getPos() const

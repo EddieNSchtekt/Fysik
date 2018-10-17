@@ -13,6 +13,7 @@ Vec::Vec(const Vec & other)
 	x = other.x;
 	y = other.y;
 	z = other.z;
+	length = -1;
 }
 
 float Vec::getX() const
@@ -50,9 +51,9 @@ void Vec::setZ(const float val)
 
 float Vec::getLength()
 {
-	if (length <= -1)
+	if (length < 0)
 	{
-		length = sqrtf(x * x + y * y + z * z);
+		length = sqrtf((x * x) + (y * y) + (z * z));
 	}
 	return length;
 }
@@ -83,6 +84,7 @@ Vec & Vec::operator+=(const Vec & other)
 	x += other.x;
 	y += other.y;
 	z += other.z;
+	length = -1;
 	return *this;
 }
 
@@ -100,6 +102,7 @@ Vec Vec::operator-=(const Vec & other)
 	x -= other.x;
 	y -= other.y;
 	z -= other.z;
+	length = -1;
 	return *this;
 }
 
@@ -114,6 +117,7 @@ Vec & Vec::operator*=(const Vec & other)
 	x *= other.x;
 	y *= other.y;
 	z *= other.z;
+	length = -1;
 	return *this;
 }
 
@@ -122,6 +126,7 @@ Vec & Vec::operator*=(const float & other)
 	x = other * x;
 	y = other * y;
 	z = other * z;
+	length = -1;
 	return *this;
 }
 
@@ -139,5 +144,6 @@ Vec & Vec::operator=(const Vec & other)
 	x = other.x;
 	y = other.y;
 	z = other.z;
+	length = -1;
 	return *this;
 }

@@ -17,13 +17,25 @@ int main()
 		//Error!
 	}
 	bg.setTexture(bgTexture);
-	bg.setTextureRect(sf::IntRect(0, 0, 200, 200));
+	bg.setTextureRect(sf::IntRect(0, 0, bgSize, bgSize));
 
-	Boat o(100.0f,Vec(100.0f, 100.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15, 5,Vec(0.0, 1.0,0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1, 0.8, Vec(0.0, -1.0, 0.0)));
+	sf::Sprite boatSprite;
+	sf::Texture boatTexture;
+	int boatWidth = 64, boatHeight = 64;
+	if (!boatTexture.loadFromFile("Images/Boat.png"))
+	{
+		//Error!
+	}
+	boatSprite.setTexture(boatTexture);
+	boatSprite.setTextureRect(sf::IntRect(0, 0, boatWidth, boatHeight));
+
+	Boat o(100.0f,Vec(68.0f, 68.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15, 5,Vec(0.0, -1.0,0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1, 0.8, Vec(0.0, -1.0, 0.0)));
 
 
 	//PhysicalObject o(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f));
 	float t = 0.0f;
+	Vec wind = Vec(-5, 5, 0); //Något skumt med vind, båt går alltid samma riktning...
+	int waveDir = 0;
 	while (window.isOpen())
 	{
 		t = cl.restart().asSeconds();
@@ -55,20 +67,56 @@ int main()
 				}*/
 			}
 		}
-		o.windCalc(t,Vec(5,5,0));
+		o.windCalc(t,wind);
 		o.waterDragCalc(t);
 		float x = o.getPos().getX();
 		float y = o.getPos().getY();
-		system("CLS");
-		printf("X : %f\nY: %f", x, y);
-		shape.setPosition(x, y);
 
-		/*bg.setTextureRect(sf::IntRect(bgSize*((int)keyFrame%4), 0, 200, 200));
-		keyFrame += 0.1;*/
+		float vel = o.getVel().getLength();
+		float spdX = o.getVel().getX();
+		float spdY = o.getVel().getY();
+		float dirX = spdX / vel;
+		float dirY = spdY / vel;
+
+		float windVel = wind.getLength();
+		float windDirX = wind.getX() / windVel;
+		float windDirY = wind.getY() / windVel;
+
+		system("CLS");
+		printf("X : %f\nY: %f\nBoat Velocity: %f\nBoat Direction: (%f,%f)\nWind Velocity: %f\nWind Direction: (%f,%f)", x, y, vel, dirX, dirY, windVel, windDirX, windDirY);
+		boatSprite.setPosition(x, y);
+		if (y < -boatHeight)
+			o.setPos(Vec(x, bgSize, 0));
+		else if (y > bgSize)
+			o.setPos(Vec(x, -boatHeight, 0));
+		if (x > bgSize)
+			o.setPos(Vec(-boatWidth, y, 0));
+		else if (x < -boatWidth)
+			o.setPos(Vec(bgSize, y, 0));
+
+
+		if (wind.getX() > 0)
+		{
+			if (wind.getY() > 0)
+				waveDir = 0;
+			else
+				waveDir = 1;
+		}
+		else
+		{
+			if (wind.getY() < 0)
+				waveDir = 2;
+			else
+				waveDir = 3;
+		}
+
+		bg.setTextureRect(sf::IntRect(bgSize*((int)keyFrame%8), bgSize*waveDir, bgSize, bgSize));
+		boatSprite.setTextureRect(sf::IntRect(boatWidth*((int)(keyFrame/2) % 2), 0, boatWidth, boatHeight));
+		keyFrame += 0.02 * log(windVel);
 
 		window.clear();
 		window.draw(bg);
-		window.draw(shape);
+		window.draw(boatSprite);
 		window.display();
 	}
 
