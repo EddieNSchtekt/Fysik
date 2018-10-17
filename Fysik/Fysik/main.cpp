@@ -34,7 +34,7 @@ int main()
 
 	//PhysicalObject o(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f));
 	float t = 0.0f;
-	Vec wind = Vec(-5, 5, 0); //Något skumt med vind, båt går alltid samma riktning...
+	Vec wind = Vec(5, 5, 0);
 	int waveDir = 0;
 	while (window.isOpen())
 	{

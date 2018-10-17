@@ -53,7 +53,7 @@ float Vec::getLength()
 {
 	if (length < 0)
 	{
-		length = sqrtf((x * x) + (y * y) + (z * z));
+		length = sqrtf(x * x + y * y + z * z);
 	}
 	return length;
 }

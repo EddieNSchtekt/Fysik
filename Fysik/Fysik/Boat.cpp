@@ -66,22 +66,26 @@ void Boat::windCalc(float time, Vec trueWind)
 
 void Boat::waterDragCalc(float time)
 {
-	Vec waterFlow = vel * -1;
+	Vec dragForce(0.f, 0.f, 0.f);
+	Vec liftForce(0.f, 0.f, 0.f);
+	if (vel.getLength() > 0.000001)
+	{
+		Vec waterFlow = vel * -1;
 
-	// viscous drag and lift calculated for the keel.
-	float drag = 0;
-	float lift = 0;
+		// viscous drag and lift calculated for the keel.
+		float drag = 0;
+		float lift = 0;
 
-	drag = keel->CD(waterFlow);
-	lift = keel->CL(waterFlow);
+		drag = keel->CD(waterFlow);
+		lift = keel->CL(waterFlow);
 
-	float liftForceLength = (float)DENSITY_WATER*lift*keel->area()*(waterFlow).getLength();
+		float liftForceLength = (float)DENSITY_WATER*lift*keel->area()*(waterFlow).getLength();
 
-	float dragForceLength = (float)DENSITY_WATER*drag*keel->area()*(waterFlow).getLength();
+		float dragForceLength = (float)DENSITY_WATER*drag*keel->area()*(waterFlow).getLength();
 
-	Vec dragForce = waterFlow * (dragForceLength / waterFlow.getLength());
-	Vec liftForce = Vec(waterFlow.getY(), -waterFlow.getX())*(liftForceLength / waterFlow.getLength());
-
+		dragForce = waterFlow * (dragForceLength / waterFlow.getLength());
+		liftForce = Vec(waterFlow.getY(), -waterFlow.getX())*(liftForceLength / waterFlow.getLength());
+	}
 	Vec res = liftForce + dragForce;
 
 	acc = res * (1 / mass);
