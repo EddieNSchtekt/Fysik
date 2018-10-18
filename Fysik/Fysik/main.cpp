@@ -72,14 +72,15 @@ int main()
 
 	//PhysicalObject o(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f));
 	float t = 0.0f;
+	float clearCounter = 0.0f;
 	Vec wind;
 	float windVel;
 
 	float windAngle;
 
 	windVel = 10;
-	windAngle = 180;
-	wind = Vec(sin(windAngle*(2*PI)/360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
+	windAngle = 90;
+	wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 	
 	int waveDir = 0;
 	while (window.isOpen())
@@ -124,7 +125,6 @@ int main()
 		float dirX = spdX / vel;
 		float dirY = spdY / vel;
 
-		//windVel = wind.getLength();
 		float windDirX = wind.getX() / windVel;
 		float windDirY = wind.getY() / windVel;
 
@@ -138,8 +138,13 @@ int main()
 		float appWindDirX = appWind.getX() / appWind.getLength();
 		float appWindDirY = appWind.getY() / appWind.getLength();
 
-		system("cls");
-		printf("X : %f\nY: %f\nBoat Velocity: %f\nBoat Direction: (%f,%f)\nWind Velocity: %f\nWind Direction: (%f,%f)\nApparent Wind Velocity: %f\nApparent Wind Direction: (%f,%f)", x, y, vel, dirX, dirY, windVel, windDirX, windDirY, appWind.getLength(), appWindDirX, appWindDirY);
+		clearCounter += 0.001;
+		if (clearCounter > 1)
+		{
+			system("cls");
+			clearCounter = 0;
+			printf("X : %f\nY: %f\nBoat Velocity: %f\nBoat Direction: (%f,%f)\nWind Velocity: %f\nWind Direction: (%f,%f)\nApparent Wind Velocity: %f\nApparent Wind Direction: (%f,%f)", x, y, vel, dirX, dirY, windVel, windDirX, windDirY, appWind.getLength(), appWindDirX, appWindDirY);
+		}
 		boatSprite.setPosition(x, y);
 		l.setPosition(x, y);
 		d.setPosition(x, y);
@@ -180,8 +185,6 @@ int main()
 			kd.setPosition(bgSize, y);
 		}
 
-
-
 		if (wind.getX() > 0)
 		{
 			if (wind.getY() > 0)
@@ -200,7 +203,7 @@ int main()
 
 		bg.setTextureRect(sf::IntRect(bgSize*((int)keyFrame%8), bgSize*waveDir, bgSize, bgSize));
 		boatSprite.setTextureRect(sf::IntRect(boatWidth*((int)(keyFrame/2) % 2), 0, boatWidth, boatHeight));
-		keyFrame += 0.02 * log(abs(windVel)+1);
+		keyFrame += 0.0005 * log(abs(windVel)+1);
 
 		wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 

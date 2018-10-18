@@ -93,6 +93,22 @@ void Boat::waterDragCalc(float time)
 
 }
 
+void Boat::hullResistance(float time, float salt, float T)
+{
+	float µ, wA = 25.2, wL = 10, CH, CF, CW = 0, Re, v = vel.getLength();
+	Vec res = vel * (-1 / v);
+
+	µ = 2.41 * 0.00001 * salt * pow(10, (247.8 / (T - 140)));
+	Re = (DENSITY_WATER*v*0.7*wL) / µ;
+	CF = 3 / pow((40 * (log(Re) - 2)), 2);
+	CH = CF + CW;
+	res *= 0.5*DENSITY_WATER*wA*CH*v*v;
+
+	acc = res * (1 / mass);
+
+	update(time);
+}
+
 Vec Boat::getSailDrag() const
 {
 	return sailDrag;

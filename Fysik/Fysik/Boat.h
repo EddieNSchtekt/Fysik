@@ -33,6 +33,8 @@ public:
 
 	void waterDragCalc(float time);
 
+	void hullResistance(float time, float salt, float T);
+
 	Vec getSailDrag() const;
 	Vec getSailLift() const;
 
