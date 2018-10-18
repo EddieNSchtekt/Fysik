@@ -15,6 +15,7 @@ private:
 	Sail ** sails; // max size = 2
 	int nrOfSails;
 	Keel *keel;
+	Keel *rudder;
 
 	Vec sailLift;
 	Vec sailDrag;
@@ -25,7 +26,7 @@ private:
 public:
 	Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const SailMain & sailMain, const Keel & keel);
 
-	Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const SailMain & sailMain, const Keel & keel);
+	Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const SailMain & sailMain, const Keel & keel, const Keel & rudder);
 	
 	Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const Keel & keel);
 

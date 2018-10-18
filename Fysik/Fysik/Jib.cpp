@@ -13,8 +13,8 @@ float Jib::area()
 float Jib::CL(const Vec & apparentWind)
 {
 	float angle = this->angle.dot(apparentWind);
-	angle = angle / sqrt(((apparentWind.getX()*apparentWind.getX() + apparentWind.getY()*apparentWind.getY())*this->angle.getLength()));
-	angle = acos(angle) * 360 / (2 * PI);
+	angle = angle / (float)sqrt(((apparentWind.getX()*apparentWind.getX() + apparentWind.getY()*apparentWind.getY())*this->angle.getLength()));
+	angle = (float)acos(angle) * 360 / (float)(2 * PI);
 
 	float res = 0;
 
@@ -32,8 +32,8 @@ float Jib::CL(const Vec & apparentWind)
 float Jib::CD(const Vec & apparentWind)
 {
 	float angle = this->angle.dot(apparentWind);
-	angle = angle / sqrt(((apparentWind.getX()*apparentWind.getX() + apparentWind.getY()*apparentWind.getY())*this->angle.getLength()));
-	angle = acos(angle) * 360 / (2 * PI);
+	angle = angle / (float)sqrt(((apparentWind.getX()*apparentWind.getX() + apparentWind.getY()*apparentWind.getY())*this->angle.getLength()));
+	angle = (float)acos(angle) * 360 / (float)(2 * PI);
 
 	float res = 0;
 

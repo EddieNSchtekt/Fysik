@@ -1,36 +1,34 @@
 #include "Keel.h"
 
-Keel::Keel(const Vec & pos, const Vec & vel, const Vec & acc, const float & height, const float & length, const Vec & angle) :Sail(pos, vel, acc, height, length, angle)
+Keel::Keel(const Vec & pos, const Vec & vel, const Vec & acc, const float & height, const float & length, const Vec & angle, float chordSmall) :Sail(pos, vel, acc, height, length, angle)
 {
+	this->chordSmall = chordSmall;
+}
+
+Keel::Keel(const Keel & other):Sail(other.pos,other.vel,other.acc,other.height,other.base,other.angle)
+{
+	this->chordSmall = other.chordSmall;
 }
 
 float Keel::area()
 {
-	float draft = 1.3;
-	float chord1 = 1.3;
-	float chord2 = 0.7;
-
-	float chordMean = (chord1 + chord2) / 2;
-	return draft * chordMean;
+	float chordMean = (base + chordSmall) / 2;
+	return height * chordMean;
 }
 
 float Keel::CL(const Vec & waterFlow)
 {
 	float angle = this->angle.dot(waterFlow);
-	angle = angle / sqrt(((waterFlow.getX()*waterFlow.getX() + waterFlow.getY()*waterFlow.getY())*this->angle.getLength()));
-	angle = acos(angle) * 360 / (2 * PI);
+	angle = angle / (float)sqrt(((waterFlow.getX()*waterFlow.getX() + waterFlow.getY()*waterFlow.getY())*this->angle.getLength()));
+	angle = (float)acos(angle) * 360 / (float)(2 * PI);
 	angle = 180 - angle;
 	float res = 0;
 
-	float draft = 1.3;
-	float chord1 = 1.3;
-	float chord2 = 0.7;
+	float chordMean = (base + chordSmall) / 2;
 
-	float chordMean = (chord1 + chord2) / 2;
+	float aspectRatio = height / chordMean;
 
-	float aspectRatio = draft / chordMean;
-
-	res = 0.11*angle / (1 + 2 / aspectRatio);
+	res = 0.11f*angle / (1 + 2 / aspectRatio);
 
 	float cross = (this->angle.crossProd(waterFlow)).getZ();
 
@@ -45,22 +43,17 @@ float Keel::CL(const Vec & waterFlow)
 float Keel::CD(const Vec & waterFlow)
 {
 	float angle = this->angle.dot(waterFlow);
-	angle = angle / sqrt(((waterFlow.getX()*waterFlow.getX() + waterFlow.getY()*waterFlow.getY())*this->angle.getLength()));
-	angle = acos(angle) * 360 / (2 * PI);
+	angle = angle / (float)sqrt(((waterFlow.getX()*waterFlow.getX() + waterFlow.getY()*waterFlow.getY())*this->angle.getLength()));
+	angle = (float)acos(angle) * 360 / (2 * (float)PI);
 	angle = 180 - angle;
 	float res = 0;
 
+	float chordMean = (base + chordSmall) / 2;
 
-	float draft = 1.3;
-	float chord1 = 1.3;
-	float chord2 = 0.7;
+	float aspectRatio = height / chordMean;
 
-	float chordMean = (chord1 + chord2) / 2;
+	res = 0.11f*angle / (1 + 2 / aspectRatio);
 
-	float aspectRatio = draft / chordMean;
-
-	res = 0.11*angle / (1 + 2 / aspectRatio);
-
-	res = res * res / (PI *aspectRatio);
+	res = res * res / ((float)PI *aspectRatio);
 	return res;
 }
