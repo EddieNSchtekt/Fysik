@@ -1,6 +1,6 @@
 #include "Boat.h"
 
-Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const SailMain & sailMain, const Keel & keel) : PhysicalObject(pos, vel, acc)
+Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const SailMain & sailMain, const Keel & keel) : PhysicalObject(pos, vel, acc), sailDrag(0.0f, 0.0f, 0.0f), sailLift(0.0f, 0.0f, 0.0f), keelDrag(0.0f, 0.0f, 0.0f), keelLift(0.0f, 0.0f, 0.0f)
 {
 	this->mass = mass;
 	sails = new Sail*[2];
@@ -10,7 +10,7 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 	this->keel = new Keel(keel);
 }
 
-Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const SailMain & sailMain, const Keel & keel) : PhysicalObject(pos, vel, acc)
+Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const SailMain & sailMain, const Keel & keel) : PhysicalObject(pos, vel, acc), sailDrag(0.0f, 0.0f, 0.0f), sailLift(0.0f, 0.0f, 0.0f), keelDrag(0.0f, 0.0f, 0.0f), keelLift(0.0f, 0.0f, 0.0f)
 {
 	this->mass = mass;
 	sails = new Sail*[1];
@@ -19,7 +19,7 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 	this->keel = new Keel(keel);
 }
 
-Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const Keel & keel) : PhysicalObject(pos, vel, acc)
+Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const Keel & keel) : PhysicalObject(pos, vel, acc), sailDrag(0.0f, 0.0f, 0.0f), sailLift(0.0f, 0.0f, 0.0f), keelDrag(0.0f, 0.0f, 0.0f), keelLift(0.0f, 0.0f, 0.0f)
 {
 	this->mass = mass;
 	sails = new Sail*[1];
@@ -53,11 +53,11 @@ void Boat::windCalc(float time, Vec trueWind)
 
 	float dragForceLength = (float)DENSITY_AIR*drag*sails[0]->area()*(apparentWind).getLength();
 
-	Vec dragForce = apparentWind * (dragForceLength/apparentWind.getLength());
+	sailDrag = apparentWind * (dragForceLength/apparentWind.getLength());
 	
-	Vec liftForce = Vec(apparentWind.getY(), -apparentWind.getX())*(liftForceLength / apparentWind.getLength());
+	sailLift = Vec(apparentWind.getY(), -apparentWind.getX())*(liftForceLength / apparentWind.getLength());
 	
-	Vec res = liftForce + dragForce;
+	Vec res = sailLift + sailDrag;
 
 	acc = res*(1/mass);
 
@@ -66,8 +66,6 @@ void Boat::windCalc(float time, Vec trueWind)
 
 void Boat::waterDragCalc(float time)
 {
-	Vec dragForce(0.f, 0.f, 0.f);
-	Vec liftForce(0.f, 0.f, 0.f);
 	if (vel.getLength() > 0.000001)
 	{
 		Vec waterFlow = vel * -1;
@@ -83,13 +81,34 @@ void Boat::waterDragCalc(float time)
 
 		float dragForceLength = (float)DENSITY_WATER*drag*keel->area()*(waterFlow).getLength();
 
-		dragForce = waterFlow * (dragForceLength / waterFlow.getLength());
-		liftForce = Vec(waterFlow.getY(), -waterFlow.getX())*(liftForceLength / waterFlow.getLength());
+		keelDrag = waterFlow * (dragForceLength / waterFlow.getLength());
+		keelLift = Vec(waterFlow.getY(), -waterFlow.getX())*(liftForceLength / waterFlow.getLength());
 	}
-	Vec res = liftForce + dragForce;
+	
+	Vec res = keelDrag + keelLift;
 
 	acc = res * (1 / mass);
 
 	update(time);
 
+}
+
+Vec Boat::getSailDrag() const
+{
+	return sailDrag;
+}
+
+Vec Boat::getSailLift() const
+{
+	return sailLift;
+}
+
+Vec Boat::getKeelDrag() const
+{
+	return keelDrag;
+}
+
+Vec Boat::getKeelLift() const
+{
+	return keelLift;
 }

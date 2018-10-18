@@ -16,12 +16,14 @@ float SailMain::CL(const Vec & apparentWind)
 	angle = acos(angle)*360/(2* PI);
 	angle = 180 - angle;
 	float res = 0;
-	if (angle < 100 && angle > 20)
+	if (angle < 100 && angle > 27)
 		res = -0.4745031571f + 0.1382159744f*angle - 0.0030069261f*angle*angle + 0.0000237741f*angle*angle*angle - 0.0000000625f*angle*angle*angle*angle; // Regression made from geogebra
-	else if (angle > 100 && angle < 160)
+	else if (angle > 100 && angle < 180)
 		res = 1.8f - 0.01f*angle; //regression made from geogebra
+	else if (angle < 27)
+		res = 1.5f;
 	else
-		res = 0.0f;
+		res = 0.00f;
 
 	float cross = (this->angle.crossProd(apparentWind)).getZ();
 	if (cross < 0 && angle < 90 || cross > 0 && angle > 90)
@@ -54,7 +56,7 @@ float SailMain::CD(const Vec & apparentWind)
 	}
 	else
 	{
-		res = 0;
+		res = 0.02;
 	}
 	return res;
 }
