@@ -8,6 +8,7 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 	sails[1] = new SailMain(sailMain);
 	nrOfSails = 2;
 	this->keel = new Keel(keel);
+	angle = 0;
 }
 
 Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const SailMain & sailMain, const Keel & keel, const Keel & rudder) : PhysicalObject(pos, vel, acc), sailDrag(0.0f, 0.0f, 0.0f), sailLift(0.0f, 0.0f, 0.0f), keelDrag(0.0f, 0.0f, 0.0f), keelLift(0.0f, 0.0f, 0.0f)
@@ -18,6 +19,7 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 	nrOfSails = 1;
 	this->keel = new Keel(keel);
 	this->rudder = new Keel(rudder);
+	angle = 0;
 }
 
 Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const Keel & keel) : PhysicalObject(pos, vel, acc), sailDrag(0.0f, 0.0f, 0.0f), sailLift(0.0f, 0.0f, 0.0f), keelDrag(0.0f, 0.0f, 0.0f), keelLift(0.0f, 0.0f, 0.0f)
@@ -27,6 +29,7 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 	sails[0] = new Jib(jib);
 	nrOfSails = 1;
 	this->keel = new Keel(keel);
+	angle = 0;
 }
 
 //TODO!!!! fixa en riktig vinkel mellan segel o vind.
@@ -91,7 +94,34 @@ void Boat::waterDragCalc(float time)
 	acc = res * (1 / mass);
 
 	update(time);
+}
 
+void Boat::rudderDragCalc(float time)
+{
+	if (vel.getLength() > 0.000001)
+	{
+		Vec waterFlow = vel * -1;
+
+		// viscous drag and lift calculated for the keel.
+		float drag = 0;
+		float lift = 0;
+
+		drag = rudder->CD(waterFlow);
+		lift = rudder->CL(waterFlow);
+
+		float liftForceLength = (float)DENSITY_WATER*lift*rudder->area()*(waterFlow).getLength();
+
+		float dragForceLength = (float)DENSITY_WATER*drag*rudder->area()*(waterFlow).getLength();
+
+		rudderDrag = waterFlow * (dragForceLength / waterFlow.getLength());
+		rudderLift = Vec(waterFlow.getY(), -waterFlow.getX())*(liftForceLength / waterFlow.getLength());
+	}
+
+	Vec res = rudderDrag + rudderLift;
+
+	acc = res * (1 / mass);
+
+	update(time);
 }
 
 Vec Boat::getSailDrag() const
