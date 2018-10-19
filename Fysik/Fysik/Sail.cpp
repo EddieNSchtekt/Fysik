@@ -22,6 +22,12 @@ Vec Sail::getAngle() const
 	return angle;
 }
 
+float Sail::getRotation() const
+{
+	float res = acos(angle.getX());
+	return res;
+}
+
 void Sail::setHeight(float newHeight)
 {
 	height = newHeight;
@@ -39,7 +45,7 @@ void Sail::setAngle(const Vec & value)
 
 void Sail::setRotation(const float & value)
 {
-	angle = Vec(cos(value) + sin(value), -sin(value) + cos(value));
+	angle = Vec(cos(value), -sin(value));
 }
 
 void Sail::rotate(const float & value)

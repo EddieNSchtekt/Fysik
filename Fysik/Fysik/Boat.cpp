@@ -95,49 +95,50 @@ void Boat::waterDragCalc(float time)
 
 	update(time);
 
-	rudder->setAngle(vel);
+	//rudder->setAngle(vel - rudderDisplacement);
 }
 
 void Boat::rudderDragCalc(float time)
 {
-	if (vel.getLength() > 10)
+	if (vel.getLength() > 0.000001)
 	{
-		if (vel.getLength() > 0.000001)
-		{
-			Vec waterFlow = vel * -1;
+		Vec waterFlow = vel * -1;
 
-			// viscous drag and lift calculated for the keel.
-			float drag = 0;
-			float lift = 0;
+		// viscous drag and lift calculated for the keel.
+		float drag = 0;
+		float lift = 0;
+		drag = rudder->CD(waterFlow);
+		lift = rudder->CL(waterFlow);
 
-			drag = rudder->CD(waterFlow);
-			lift = rudder->CL(waterFlow);
+		float liftForceLength = (float)DENSITY_WATER*lift*rudder->area()*(waterFlow).getLength();
 
-			float liftForceLength = (float)DENSITY_WATER*lift*rudder->area()*(waterFlow).getLength();
+		float dragForceLength = (float)DENSITY_WATER*drag*rudder->area()*(waterFlow).getLength();
 
-			float dragForceLength = (float)DENSITY_WATER*drag*rudder->area()*(waterFlow).getLength();
-
-			rudderDrag = waterFlow * (dragForceLength / waterFlow.getLength());
-			rudderLift = Vec(waterFlow.getY(), -waterFlow.getX())*(liftForceLength / waterFlow.getLength());
-		}
+		rudderDrag = waterFlow * (dragForceLength / waterFlow.getLength());
+		rudderLift = Vec(waterFlow.getY(), -waterFlow.getX())*(liftForceLength / waterFlow.getLength());
 	}
 
-	//Vec res = rudderDrag + rudderLift;
+	Vec res = rudderDrag + rudderLift;
 
-	//acc = res * (1 / mass);
+	acc = res * (1 / mass);
 
-	//update(time);
+	update(time);
 }
 
 void Boat::rudderRotationCalc(float time)
 {
-	if (vel.getLength() > 10)
+	if (vel.getLength() > 0.00000001)
 	{
+		// Metod för beräkning.
+		// "anglerate" = dw/dt, anglerate är även detsamma som vridmomentet/trögheten av objektet.
+		// Alltså är vinkelhastigheten, hur mycket vi skall vrida båten under en tid, detsamma som 
+
 		Vec force = rudderDrag + rudderLift;
 
 		float length = force.dot(keel->getAngle()); //since keelAngle.length == 1 we do not need a division of it.
 
 		force = force - keel->getAngle() * length; // sideforce
+
 		float r = 3; //distance from center of mass in boat.
 
 		float torque = force.getLength() * r;
@@ -146,11 +147,12 @@ void Boat::rudderRotationCalc(float time)
 		float boatLength = 6;
 		float inertia = ((float)1 / 12)*mass*boatLength*boatLength + ((float)1 / 4)*mass*(boatWidth*boatWidth / 4);
 
-		float angleRate = torque / inertia;
-		angle += angleRate * time;
-		keel->rotate(angleRate * time);
+		float angleAcceleration = torque / inertia;
+		angle -= angleAcceleration * time;
+		keel->rotate(-angleAcceleration * time);
 		for (int i = 0; i < nrOfSails; i++)
-			sails[i]->rotate(angleRate * time);
+			sails[i]->rotate(-angleAcceleration * time);
+		rudder->rotate(-angleAcceleration * time);
 	}
 }
 
@@ -203,4 +205,12 @@ float Boat::rudderAngle() const
 	float res = rudder->getAngle().dot(Vec(0.0f, -1.0f, 0.0f));
 	res = (float)acos(res) * 360 / (2 * PI);
 	return res;
+}
+
+void Boat::setRudderDisplacement(const float & value)
+{
+	float angleInRadians = value * 2 * PI / 360;
+	float val = rudder->getRotation() - rudderDisplacement + angleInRadians;
+	rudder->setRotation(val);
+	rudderDisplacement = value;
 }

@@ -57,7 +57,7 @@ int main()
 	arrow.setOrigin(arrowSize / 2, arrowSize / 2);
 	arrow.setPosition(arrowSize / 2, bgSize - arrowSize / 2);
 
-	Boat o(1200.0f,Vec((bgSize-boatWidth)/2, (bgSize-boatHeight)/2, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15, 5,Vec(0.0, -1.0,0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1, 0.8, Vec(0.0, -1.0, 0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 0.2, 0.1, Vec(0.0, -1.0, 0.0), 0.1));
+	Boat o(8120.0f,Vec((bgSize-boatWidth)/2, (bgSize-boatHeight)/2, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15, 5,Vec(0.0, -1.0,0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1.50, 1.85, Vec(0.0, -1.0, 0.0), 1.05), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1.47, 0.68, Vec(0.0, -1.0, 0.0), 0.32));
 
 	sf::RectangleShape l(sf::Vector2f(10, 3));
 	l.setPosition(o.getPos().getX(), o.getPos().getY());
@@ -85,7 +85,7 @@ int main()
 
 	float windAngle;
 
-	windVel = 50;
+	windVel = 10;
 	windAngle = 100;
 	wind = Vec(sin(windAngle*(2*PI)/360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 	
@@ -119,10 +119,21 @@ int main()
 				{
 					windVel--;
 				}
+
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+				{
+					o.setRudderDisplacement(2.0f);
+				}
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+				{
+					o.setRudderDisplacement(-2.0f);
+				}
 			}
 		}
+		o.setRudderDisplacement(0);
 		o.windCalc(t,wind);
 		o.waterDragCalc(t);
+
 		o.rudderDragCalc(t);
 		o.rudderRotationCalc(t);
 
@@ -229,7 +240,7 @@ int main()
 		wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 
 		arrow.setRotation(windAngle);
-		boatSprite.setRotation(o.getAngle());
+		//boatSprite.setRotation(o.getAngle());
 
 		window.clear();
 		window.draw(bg);

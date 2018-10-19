@@ -14,8 +14,11 @@ float SailMain::CL(const Vec & apparentWind)
 	float angle = this->angle.dot(apparentWind);
 	angle = angle / sqrt(((apparentWind.getX()*apparentWind.getX() + apparentWind.getY()*apparentWind.getY())*this->angle.getLength()));
 	angle = acos(angle)*360/(2* PI);
+
 	angle = 180 - angle;
+
 	float res = 0;
+
 	if (angle < 100 && angle > 27)
 		res = -0.4745031571f + 0.1382159744f*angle - 0.0030069261f*angle*angle + 0.0000237741f*angle*angle*angle - 0.0000000625f*angle*angle*angle*angle; // Regression made from geogebra
 	else if (angle > 100 && angle < 180)

@@ -18,6 +18,7 @@ public:
 	float getHeight();
 	float getBase();
 	Vec getAngle() const;
+	float getRotation() const;
 
 	//set functions
 	void setHeight(float newHeight);

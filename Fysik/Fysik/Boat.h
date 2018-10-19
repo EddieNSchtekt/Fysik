@@ -6,7 +6,7 @@
 #include "Keel.h"
 
 #define DENSITY_AIR 1.22
-#define DENSITY_WATER 997.f
+#define DENSITY_WATER 1020.f
 
 class Boat : public PhysicalObject
 {
@@ -27,6 +27,7 @@ private:
 	Vec rudderLift;
 
 	float angle;
+	float rudderDisplacement;
 public:
 	Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const SailMain & sailMain, const Keel & keel);
 
@@ -53,6 +54,8 @@ public:
 	float getAngle() const;
 	float getSailAngle() const;
 	float rudderAngle() const;
+
+	void setRudderDisplacement(const float & value);
 };
 
 #endif
