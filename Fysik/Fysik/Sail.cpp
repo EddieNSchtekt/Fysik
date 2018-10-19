@@ -44,5 +44,5 @@ void Sail::setRotation(const float & value)
 
 void Sail::rotate(const float & value)
 {
-	angle = Vec(angle.getX()*cos(value) + angle.getY()*sin(value), -angle.getX()*sin(value) + angle.getY()*sin(value));
+	angle = Vec(angle.getX()*cos(value) + angle.getY()*sin(value), -angle.getX()*sin(value) + angle.getY()*cos(value));
 }

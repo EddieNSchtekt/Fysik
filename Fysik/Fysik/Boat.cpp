@@ -126,7 +126,7 @@ void Boat::rudderDragCalc(float time)
 
 void Boat::rudderRotationCalc(float time)
 {
-	Vec force = rudderDrag + Vec(-rudderDrag.getX(),rudderDrag.getY(), 0.0f);
+	Vec force = rudderDrag + rudderLift;
 
 	float length = force.dot(keel->getAngle()); //since keelangle.length == 1 we do not need a division of it.
 	
@@ -142,13 +142,11 @@ void Boat::rudderRotationCalc(float time)
 
 	float angleRate = torque / inertia;
 	angle += angleRate * time;
-	if (angle < 0.00001)
-		angle = 2 * PI + angle;
-	angle = 0.005;
-	keel->rotate(angle);
+
+	keel->rotate(angleRate * time);
 	for (int i = 0; i < nrOfSails; i++)
-		sails[i]->rotate(angle);
-	//rudder->rotate(angle);
+		sails[i]->rotate(angleRate * time);
+	rudder->rotate(angleRate * time);
 }
 
 Vec Boat::getSailDrag() const
