@@ -20,6 +20,16 @@ float Keel::CL(const Vec & waterFlow)
 {
 	float angle = this->angle.dot(waterFlow);
 	angle = angle / (float)sqrt(((waterFlow.getX()*waterFlow.getX() + waterFlow.getY()*waterFlow.getY())*this->angle.getLength()));
+
+	if (angle < -1.000000)
+	{
+		angle = -1.000000;
+	}
+	else if (angle > 1.000000)
+	{
+		angle = 1.00000000;
+	}
+
 	angle = (float)acos(angle) * 360 / (float)(2 * PI);
 	angle = 180 - angle;
 	float res = 0;
@@ -44,6 +54,16 @@ float Keel::CD(const Vec & waterFlow)
 {
 	float angle = this->angle.dot(waterFlow);
 	angle = angle / (float)sqrt(((waterFlow.getX()*waterFlow.getX() + waterFlow.getY()*waterFlow.getY())*this->angle.getLength()));
+
+	if (angle < -1.000000)
+	{
+		angle = -1.000000;
+	}
+	else if (angle > 1.000000)
+	{
+		angle = 1.00000000;
+	}
+
 	angle = (float)acos(angle) * 360 / (2 * (float)PI);
 	angle = 180 - angle;
 	float res = 0;

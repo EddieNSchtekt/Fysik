@@ -94,59 +94,64 @@ void Boat::waterDragCalc(float time)
 	acc = res * (1 / mass);
 
 	update(time);
+
+	rudder->setAngle(vel);
 }
 
 void Boat::rudderDragCalc(float time)
 {
-	if (vel.getLength() > 0.000001)
+	if (vel.getLength() > 10)
 	{
-		Vec waterFlow = vel * -1;
+		if (vel.getLength() > 0.000001)
+		{
+			Vec waterFlow = vel * -1;
 
-		// viscous drag and lift calculated for the keel.
-		float drag = 0;
-		float lift = 0;
+			// viscous drag and lift calculated for the keel.
+			float drag = 0;
+			float lift = 0;
 
-		drag = rudder->CD(waterFlow);
-		lift = rudder->CL(waterFlow);
+			drag = rudder->CD(waterFlow);
+			lift = rudder->CL(waterFlow);
 
-		float liftForceLength = (float)DENSITY_WATER*lift*rudder->area()*(waterFlow).getLength();
+			float liftForceLength = (float)DENSITY_WATER*lift*rudder->area()*(waterFlow).getLength();
 
-		float dragForceLength = (float)DENSITY_WATER*drag*rudder->area()*(waterFlow).getLength();
+			float dragForceLength = (float)DENSITY_WATER*drag*rudder->area()*(waterFlow).getLength();
 
-		rudderDrag = waterFlow * (dragForceLength / waterFlow.getLength());
-		rudderLift = Vec(waterFlow.getY(), -waterFlow.getX())*(liftForceLength / waterFlow.getLength());
+			rudderDrag = waterFlow * (dragForceLength / waterFlow.getLength());
+			rudderLift = Vec(waterFlow.getY(), -waterFlow.getX())*(liftForceLength / waterFlow.getLength());
+		}
 	}
 
-	Vec res = rudderDrag + rudderLift;
+	//Vec res = rudderDrag + rudderLift;
 
-	acc = res * (1 / mass);
+	//acc = res * (1 / mass);
 
-	update(time);
+	//update(time);
 }
 
 void Boat::rudderRotationCalc(float time)
 {
-	Vec force = rudderDrag + rudderLift;
+	if (vel.getLength() > 10)
+	{
+		Vec force = rudderDrag + rudderLift;
 
-	float length = force.dot(keel->getAngle()); //since keelangle.length == 1 we do not need a division of it.
-	
-	force = force - keel->getAngle() * length; // sideforce
+		float length = force.dot(keel->getAngle()); //since keelAngle.length == 1 we do not need a division of it.
 
-	float r = 3; //distance from center of mass in boat.
+		force = force - keel->getAngle() * length; // sideforce
+		float r = 3; //distance from center of mass in boat.
 
-	float torque = force.getLength() * r;
+		float torque = force.getLength() * r;
 
-	float boatWidth = 3;
-	float boatLength = 6;
-	float inertia = ((float)1 / 12)*mass*boatLength*boatLength + ((float)1 / 4)*mass*(boatWidth*boatWidth / 4);
+		float boatWidth = 3;
+		float boatLength = 6;
+		float inertia = ((float)1 / 12)*mass*boatLength*boatLength + ((float)1 / 4)*mass*(boatWidth*boatWidth / 4);
 
-	float angleRate = torque / inertia;
-	angle += angleRate * time;
-
-	keel->rotate(angleRate * time);
-	for (int i = 0; i < nrOfSails; i++)
-		sails[i]->rotate(angleRate * time);
-	rudder->rotate(angleRate * time);
+		float angleRate = torque / inertia;
+		angle += angleRate * time;
+		keel->rotate(angleRate * time);
+		for (int i = 0; i < nrOfSails; i++)
+			sails[i]->rotate(angleRate * time);
+	}
 }
 
 Vec Boat::getSailDrag() const
@@ -167,6 +172,16 @@ Vec Boat::getKeelDrag() const
 Vec Boat::getKeelLift() const
 {
 	return keelLift;
+}
+
+Vec Boat::getRudderDrag() const
+{
+	return rudderDrag;
+}
+
+Vec Boat::getRudderLift() const
+{
+	return rudderLift;
 }
 
 float Boat::getAngle() const

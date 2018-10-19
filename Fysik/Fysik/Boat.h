@@ -47,6 +47,9 @@ public:
 	Vec getKeelDrag() const;
 	Vec getKeelLift() const;
 
+	Vec getRudderDrag() const;
+	Vec getRudderLift() const;
+
 	float getAngle() const;
 	float getSailAngle() const;
 	float rudderAngle() const;

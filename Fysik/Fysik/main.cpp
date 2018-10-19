@@ -57,7 +57,7 @@ int main()
 	arrow.setOrigin(arrowSize / 2, arrowSize / 2);
 	arrow.setPosition(arrowSize / 2, bgSize - arrowSize / 2);
 
-	Boat o(1200.0f,Vec((bgSize-boatWidth)/2, (bgSize-boatHeight)/2, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15, 5,Vec(0.0, -1.0,0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1, 0.8, Vec(0.0, -1.0, 0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1, 0.8, Vec(0.0, -1.0, 0.0)));
+	Boat o(1200.0f,Vec((bgSize-boatWidth)/2, (bgSize-boatHeight)/2, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15, 5,Vec(0.0, -1.0,0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1, 0.8, Vec(0.0, -1.0, 0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 0.2, 0.1, Vec(0.0, -1.0, 0.0), 0.1));
 
 	sf::RectangleShape l(sf::Vector2f(10, 3));
 	l.setPosition(o.getPos().getX(), o.getPos().getY());
@@ -78,7 +78,7 @@ int main()
 	rd.setPosition(o.getPos().getX(), o.getPos().getY());
 	rd.setFillColor(sf::Color::Yellow);
 
-	//PhysicalObject o(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f));
+
 	float t = 0.0f;
 	Vec wind;
 	float windVel;
@@ -125,6 +125,7 @@ int main()
 		o.waterDragCalc(t);
 		o.rudderDragCalc(t);
 		o.rudderRotationCalc(t);
+
 		float x = o.getPos().getX();
 		float y = o.getPos().getY();
 
@@ -144,6 +145,9 @@ int main()
 		representVector(o.getKeelDrag(), &kd);
 		representVector(o.getKeelLift(), &kl);
 
+		representVector(o.getRudderDrag(), &rd);
+		representVector(o.getRudderLift(), &rl);
+
 		Vec appWind = wind - o.getVel();
 		float appWindDirX = appWind.getX() / appWind.getLength();
 		float appWindDirY = appWind.getY() / appWind.getLength();
@@ -156,6 +160,8 @@ int main()
 		d.setPosition(x, y);
 		kl.setPosition(x, y);
 		kd.setPosition(x, y);
+		rl.setPosition(x, y);
+		rd.setPosition(x, y);
 
 		if (y < -boatHeight)
 		{
@@ -164,6 +170,8 @@ int main()
 			d.setPosition(x, bgSize);
 			kl.setPosition(x, bgSize);
 			kd.setPosition(x, bgSize);
+			rl.setPosition(x, bgSize);
+			rd.setPosition(x, bgSize);
 		}
 		else if (y > bgSize)
 		{
@@ -173,6 +181,8 @@ int main()
 			l.setPosition(x, -boatHeight);
 			kl.setPosition(x, -boatHeight);
 			kd.setPosition(x, -boatHeight);
+			rd.setPosition(x, -boatHeight);
+			rl.setPosition(x, -boatHeight);
 		}
 		if (x > bgSize)
 		{
@@ -181,6 +191,8 @@ int main()
 			l.setPosition( -boatWidth, y);
 			kl.setPosition(-boatWidth, y);
 			kd.setPosition(-boatWidth, y);
+			rd.setPosition(-boatHeight, y);
+			rl.setPosition(-boatHeight, y);
 		}
 		else if (x < -boatWidth)
 		{
@@ -189,6 +201,9 @@ int main()
 			d.setPosition( bgSize, y);
 			kl.setPosition(bgSize, y);
 			kd.setPosition(bgSize, y);
+
+			rd.setPosition(bgSize, y);
+			rl.setPosition(bgSize, y);
 		}
 
 		if (wind.getX() > 0)
@@ -224,6 +239,8 @@ int main()
 		window.draw(d);
 		window.draw(kl);
 		window.draw(kd);
+		window.draw(rl);
+		window.draw(rd);
 		window.display();
 	}
 
