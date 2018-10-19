@@ -17,10 +17,14 @@ public:
 	//get functions
 	float getHeight();
 	float getBase();
+	Vec getAngle() const;
 
 	//set functions
 	void setHeight(float newHeight);
 	void setBase(float newLength);
+	void setAngle(const Vec & value);
+	void setRotation(const float & value);
+	void rotate(const float & value);
 };
 
 #endif

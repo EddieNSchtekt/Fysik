@@ -39,12 +39,17 @@ public:
 	void waterDragCalc(float time);
 
 	void rudderDragCalc(float time);
+	void rudderRotationCalc(float time);
 
 	Vec getSailDrag() const;
 	Vec getSailLift() const;
 
 	Vec getKeelDrag() const;
 	Vec getKeelLift() const;
+
+	float getAngle() const;
+	float getSailAngle() const;
+	float rudderAngle() const;
 };
 
 #endif

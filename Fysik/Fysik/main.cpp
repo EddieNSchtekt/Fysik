@@ -6,7 +6,7 @@ void representVector(Vec vec, sf::RectangleShape * rect)
 {
 	rect->setSize(sf::Vector2f(vec.getLength() / 4, 3));
 
-	float angle = 360 / (2 * PI)*acos(vec.dot(Vec(1.0f, 0.0f, 0.0f))*(1 / vec.getLength()));
+	float angle = 360 / (2 * (float)PI)*(float)acos(vec.dot(Vec(1.0f, 0.0f, 0.0f))*(1 / vec.getLength()));
 
 	if (vec.getY() < 0.0001)
 	{
@@ -43,6 +43,7 @@ int main()
 	}
 	boatSprite.setTexture(boatTexture);
 	boatSprite.setTextureRect(sf::IntRect(0, 0, boatWidth, boatHeight));
+	boatSprite.setOrigin((float)boatSprite.getTextureRect().width / 2, (float)boatSprite.getTextureRect().height / 2);
 
 	sf::Sprite arrow;
 	sf::Texture arrowTex;
@@ -70,6 +71,13 @@ int main()
 	kd.setPosition(o.getPos().getX(), o.getPos().getY());
 	kd.setFillColor(sf::Color::Red);
 
+	sf::RectangleShape rl(sf::Vector2f(10, 3));
+	rl.setPosition(o.getPos().getX(), o.getPos().getY());
+	rl.setFillColor(sf::Color::Yellow);
+	sf::RectangleShape rd(sf::Vector2f(10, 3));
+	rd.setPosition(o.getPos().getX(), o.getPos().getY());
+	rd.setFillColor(sf::Color::Yellow);
+
 	//PhysicalObject o(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f));
 	float t = 0.0f;
 	Vec wind;
@@ -77,7 +85,7 @@ int main()
 
 	float windAngle;
 
-	windVel = 10;
+	windVel = 50;
 	windAngle = 100;
 	wind = Vec(sin(windAngle*(2*PI)/360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 	
@@ -115,6 +123,8 @@ int main()
 		}
 		o.windCalc(t,wind);
 		o.waterDragCalc(t);
+		o.rudderDragCalc(t);
+		o.rudderRotationCalc(t);
 		float x = o.getPos().getX();
 		float y = o.getPos().getY();
 
@@ -139,7 +149,8 @@ int main()
 		float appWindDirY = appWind.getY() / appWind.getLength();
 
 		system("cls");
-		printf("X : %f\nY: %f\nBoat Velocity: %f\nBoat Direction: (%f,%f)\nWind Velocity: %f\nWind Direction: (%f,%f)\nApparent Wind Velocity: %f\nApparent Wind Direction: (%f,%f)", x, y, vel, dirX, dirY, windVel, windDirX, windDirY, appWind.getLength(), appWindDirX, appWindDirY);
+		printf("X : %f\nY: %f\nBoat Velocity: %f\nBoat Direction: (%f,%f)\nWind Velocity: %f\nWind Direction: (%f,%f)\nApparent Wind Velocity: %f\nApparent Wind Direction: (%f,%f)\n", x, y, vel, dirX, dirY, windVel, windDirX, windDirY, appWind.getLength(), appWindDirX, appWindDirY);
+		printf("sailAngle: %f\nkeelAngle: %f\nrudderAngle: %f", o.getSailAngle(),o.getAngle(),o.rudderAngle());
 		boatSprite.setPosition(x, y);
 		l.setPosition(x, y);
 		d.setPosition(x, y);
@@ -197,11 +208,13 @@ int main()
 
 		bg.setTextureRect(sf::IntRect(bgSize*((int)keyFrame%8), bgSize*waveDir, bgSize, bgSize));
 		boatSprite.setTextureRect(sf::IntRect(boatWidth*((int)(keyFrame/2) % 2), 0, boatWidth, boatHeight));
+		boatSprite.setRotation(o.getAngle());
 		keyFrame += 0.02 * log(abs(windVel)+1);
 
 		wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 
 		arrow.setRotation(windAngle);
+		boatSprite.setRotation(o.getAngle());
 
 		window.clear();
 		window.draw(bg);

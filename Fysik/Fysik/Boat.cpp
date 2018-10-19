@@ -124,6 +124,33 @@ void Boat::rudderDragCalc(float time)
 	update(time);
 }
 
+void Boat::rudderRotationCalc(float time)
+{
+	Vec force = rudderDrag + Vec(-rudderDrag.getX(),rudderDrag.getY(), 0.0f);
+
+	float length = force.dot(keel->getAngle()); //since keelangle.length == 1 we do not need a division of it.
+	
+	force = force - keel->getAngle() * length; // sideforce
+
+	float r = 3; //distance from center of mass in boat.
+
+	float torque = force.getLength() * r;
+
+	float boatWidth = 3;
+	float boatLength = 6;
+	float inertia = ((float)1 / 12)*mass*boatLength*boatLength + ((float)1 / 4)*mass*(boatWidth*boatWidth / 4);
+
+	float angleRate = torque / inertia;
+	angle += angleRate * time;
+	if (angle < 0.00001)
+		angle = 2 * PI + angle;
+	angle = 0.005;
+	keel->rotate(angle);
+	for (int i = 0; i < nrOfSails; i++)
+		sails[i]->rotate(angle);
+	//rudder->rotate(angle);
+}
+
 Vec Boat::getSailDrag() const
 {
 	return sailDrag;
@@ -142,4 +169,25 @@ Vec Boat::getKeelDrag() const
 Vec Boat::getKeelLift() const
 {
 	return keelLift;
+}
+
+float Boat::getAngle() const
+{
+	float res = keel->getAngle().dot(Vec(0.0f, -1.0f, 0.0f));
+	res = (float)acos(res) * 360 / (2 * PI);
+	return res;
+}
+
+float Boat::getSailAngle() const
+{
+	float res = sails[0]->getAngle().dot(Vec(0.0f, -1.0f, 0.0f));
+	res = (float)acos(res) * 360 / (2 * PI);
+	return res;
+}
+
+float Boat::rudderAngle() const
+{
+	float res = rudder->getAngle().dot(Vec(0.0f, -1.0f, 0.0f));
+	res = (float)acos(res) * 360 / (2 * PI);
+	return res;
 }
