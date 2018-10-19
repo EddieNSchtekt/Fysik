@@ -56,7 +56,7 @@ int main()
 	arrow.setOrigin(arrowSize / 2, arrowSize / 2);
 	arrow.setPosition(arrowSize / 2, bgSize - arrowSize / 2);
 
-	Boat o(1200.0f,Vec((bgSize-boatWidth)/2, (bgSize-boatHeight)/2, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15, 5,Vec(0.0, -1.0,0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1, 0.8, Vec(0.0, -1.0, 0.0)));
+	Boat o(8120, Vec((bgSize-boatWidth)/2, (bgSize-boatHeight)/2, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15.1, 4.7,Vec(0.0, -1.0,0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1.50, 1.85, 1.05, Vec(0.0, -1.0, 0.0)));
 
 	sf::RectangleShape l(sf::Vector2f(10, 3));
 	l.setPosition(o.getPos().getX(), o.getPos().getY());
@@ -70,17 +70,12 @@ int main()
 	kd.setPosition(o.getPos().getX(), o.getPos().getY());
 	kd.setFillColor(sf::Color::Red);
 
-	//PhysicalObject o(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f));
 	float t = 0.0f;
 	float clearCounter = 0.0f;
-	Vec wind;
-	float windVel;
 
-	float windAngle;
-
-	windVel = 10;
-	windAngle = 90;
-	wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
+	float windVel = 100;
+	float windAngle = 90;
+	Vec wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 	
 	int waveDir = 0;
 	while (window.isOpen())
@@ -114,8 +109,7 @@ int main()
 				}
 			}
 		}
-		o.windCalc(t,wind);
-		o.waterDragCalc(t);
+		o.calcForce(t, wind);
 		float x = o.getPos().getX();
 		float y = o.getPos().getY();
 
@@ -203,7 +197,7 @@ int main()
 
 		bg.setTextureRect(sf::IntRect(bgSize*((int)keyFrame%8), bgSize*waveDir, bgSize, bgSize));
 		boatSprite.setTextureRect(sf::IntRect(boatWidth*((int)(keyFrame/2) % 2), 0, boatWidth, boatHeight));
-		keyFrame += 0.0005 * log(abs(windVel)+1);
+		keyFrame += 0.0003 * log(abs(windVel)+1);
 
 		wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 

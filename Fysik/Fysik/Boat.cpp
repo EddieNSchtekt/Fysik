@@ -29,7 +29,7 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 }
 
 //TODO!!!! fixa en riktig vinkel mellan segel o vind.
-void Boat::windCalc(float time, Vec trueWind)
+Vec Boat::windCalc(float time, Vec trueWind)
 {
 	Vec apparentWind = trueWind - vel;
 	
@@ -59,12 +59,10 @@ void Boat::windCalc(float time, Vec trueWind)
 	
 	Vec res = sailLift + sailDrag;
 
-	acc = res*(1/mass);
-
-	update(time);
+	return res;
 }
 
-void Boat::waterDragCalc(float time)
+Vec Boat::waterDragCalc(float time)
 {
 	if (vel.getLength() > 0.000001)
 	{
@@ -87,25 +85,31 @@ void Boat::waterDragCalc(float time)
 	
 	Vec res = keelDrag + keelLift;
 
-	acc = res * (1 / mass);
-
-	update(time);
-
+	return res;
 }
 
-void Boat::hullResistance(float time, float salt, float T)
+Vec Boat::hullResistance(float time)
 {
-	float µ, wA = 25.2, wL = 10, CH, CF, CW = 0, Re, v = vel.getLength();
-	Vec res = vel * (-1 / v);
+	float v = vel.getLength();
+	Vec res = Vec(0.f, 0.f, 0.f);
+	if (v > 0)
+	{
+		float µ, wA = 30.9, wL = 10, CH, CF, CW = 0, Re, salt = 1.08, T = 20 + 273.15;
+		res = vel * (-1 / v);
 
-	µ = 2.41 * 0.00001 * salt * pow(10, (247.8 / (T - 140)));
-	Re = (DENSITY_WATER*v*0.7*wL) / µ;
-	CF = 3 / pow((40 * (log(Re) - 2)), 2);
-	CH = CF + CW;
-	res *= 0.5*DENSITY_WATER*wA*CH*v*v;
+		µ = 2.41 * 0.00001 * salt * pow(10, (247.8 / (T - 140)));
+		Re = (DENSITY_WATER*v*0.7*wL) / µ;
+		CF = 3 / pow((40 * (log(Re) - 2)), 2);
+		CH = CF + CW;
+		res *= 0.5*DENSITY_WATER*wA*CH*v*v;
+	}
+	return res;
+}
 
+void Boat::calcForce(float time, Vec trueWind)
+{
+	Vec res = this->windCalc(time, trueWind) + this->waterDragCalc(time) + this->hullResistance(time);
 	acc = res * (1 / mass);
-
 	update(time);
 }
 

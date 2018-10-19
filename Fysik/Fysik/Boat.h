@@ -6,7 +6,7 @@
 #include "Keel.h"
 
 #define DENSITY_AIR 1.22
-#define DENSITY_WATER 997.f
+#define DENSITY_WATER 1025.f
 
 class Boat : public PhysicalObject
 {
@@ -29,11 +29,13 @@ public:
 	
 	Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const Keel & keel);
 
-	void windCalc(float time, Vec trueWind);
+	Vec windCalc(float time, Vec trueWind);
 
-	void waterDragCalc(float time);
+	Vec waterDragCalc(float time);
 
-	void hullResistance(float time, float salt, float T);
+	Vec hullResistance(float time);
+
+	void calcForce(float time, Vec trueWind);
 
 	Vec getSailDrag() const;
 	Vec getSailLift() const;

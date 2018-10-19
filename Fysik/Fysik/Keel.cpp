@@ -1,15 +1,14 @@
 #include "Keel.h"
 
-Keel::Keel(const Vec & pos, const Vec & vel, const Vec & acc, const float & height, const float & length, const Vec & angle) :Sail(pos, vel, acc, height, length, angle)
+Keel::Keel(const Vec & pos, const Vec & vel, const Vec & acc, const float & draft, const float & chord1, const float & chord2, const Vec & angle) :Sail(pos, vel, acc, draft, chord1, angle)
 {
+	this->draft = draft;
+	this->chord1 = chord1;
+	this->chord2 = chord2;
 }
 
 float Keel::area()
 {
-	float draft = 1.3;
-	float chord1 = 1.3;
-	float chord2 = 0.7;
-
 	float chordMean = (chord1 + chord2) / 2;
 	return draft * chordMean;
 }
@@ -21,10 +20,6 @@ float Keel::CL(const Vec & waterFlow)
 	angle = acos(angle) * 360 / (2 * PI);
 	angle = 180 - angle;
 	float res = 0;
-
-	float draft = 1.3;
-	float chord1 = 1.3;
-	float chord2 = 0.7;
 
 	float chordMean = (chord1 + chord2) / 2;
 
@@ -49,11 +44,6 @@ float Keel::CD(const Vec & waterFlow)
 	angle = acos(angle) * 360 / (2 * PI);
 	angle = 180 - angle;
 	float res = 0;
-
-
-	float draft = 1.3;
-	float chord1 = 1.3;
-	float chord2 = 0.7;
 
 	float chordMean = (chord1 + chord2) / 2;
 
