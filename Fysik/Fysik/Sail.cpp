@@ -17,6 +17,11 @@ float Sail::getBase()
 	return base;
 }
 
+Vec Sail::getAngle()
+{
+	return angle;
+}
+
 void Sail::setHeight(float newHeight)
 {
 	height = newHeight;
@@ -25,4 +30,9 @@ void Sail::setHeight(float newHeight)
 void Sail::setBase(float newBase)
 {
 	base = newBase;
+}
+
+void Sail::setAngle(Vec newAngle)
+{
+	angle = newAngle;
 }

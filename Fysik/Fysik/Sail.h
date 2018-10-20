@@ -17,10 +17,12 @@ public:
 	//get functions
 	float getHeight();
 	float getBase();
+	Vec getAngle();
 
 	//set functions
 	void setHeight(float newHeight);
 	void setBase(float newLength);
+	void setAngle(Vec newAngle);
 };
 
 #endif

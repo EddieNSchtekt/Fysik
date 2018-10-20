@@ -7,6 +7,7 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 	sails[0] = new Jib(jib);
 	sails[1] = new SailMain(sailMain);
 	nrOfSails = 2;
+	mainSail = 1;
 	this->keel = new Keel(keel);
 }
 
@@ -16,6 +17,7 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 	sails = new Sail*[1];
 	sails[0] = new SailMain(sailMain);
 	nrOfSails = 1;
+	mainSail = 0;
 	this->keel = new Keel(keel);
 }
 
@@ -25,15 +27,14 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 	sails = new Sail*[1];
 	sails[0] = new Jib(jib);
 	nrOfSails = 1;
+	mainSail = -1;
 	this->keel = new Keel(keel);
 }
 
-//TODO!!!! fixa en riktig vinkel mellan segel o vind.
-Vec Boat::windCalc(float time, Vec trueWind)
+Vec Boat::windCalc(Vec trueWind)
 {
 	Vec apparentWind = trueWind - vel;
 	
-	// viscous drag and lift calculated for a mainsail. Assuming sail is angled as the boat for now.
 	float drag = 0;
 	float lift = 0;
 	float nomArea = 0;
@@ -49,9 +50,9 @@ Vec Boat::windCalc(float time, Vec trueWind)
 	lift = lift / nomArea;
 	drag = drag / nomArea;
 
-	float liftForceLength = (float)DENSITY_AIR*lift*sails[0]->area()*(apparentWind).getLength();
+	float liftForceLength = 0.5*(float)DENSITY_AIR*lift*sails[0]->area()*(apparentWind).getLength()*(apparentWind).getLength();
 
-	float dragForceLength = (float)DENSITY_AIR*drag*sails[0]->area()*(apparentWind).getLength();
+	float dragForceLength = 0.5*(float)DENSITY_AIR*drag*sails[0]->area()*(apparentWind).getLength()*(apparentWind).getLength();
 
 	sailDrag = apparentWind * (dragForceLength/apparentWind.getLength());
 	
@@ -62,7 +63,7 @@ Vec Boat::windCalc(float time, Vec trueWind)
 	return res;
 }
 
-Vec Boat::waterDragCalc(float time)
+Vec Boat::waterDragCalc()
 {
 	if (vel.getLength() > 0.000001)
 	{
@@ -75,9 +76,9 @@ Vec Boat::waterDragCalc(float time)
 		drag = keel->CD(waterFlow);
 		lift = keel->CL(waterFlow);
 
-		float liftForceLength = (float)DENSITY_WATER*lift*keel->area()*(waterFlow).getLength();
+		float liftForceLength = 0.5*(float)DENSITY_WATER*lift*keel->area()*(waterFlow).getLength()*(waterFlow).getLength();
 
-		float dragForceLength = (float)DENSITY_WATER*drag*keel->area()*(waterFlow).getLength();
+		float dragForceLength = 0.5*(float)DENSITY_WATER*drag*keel->area()*(waterFlow).getLength()*(waterFlow).getLength();
 
 		keelDrag = waterFlow * (dragForceLength / waterFlow.getLength());
 		keelLift = Vec(waterFlow.getY(), -waterFlow.getX())*(liftForceLength / waterFlow.getLength());
@@ -88,7 +89,7 @@ Vec Boat::waterDragCalc(float time)
 	return res;
 }
 
-Vec Boat::hullResistance(float time)
+Vec Boat::hullResistance()
 {
 	float v = vel.getLength();
 	Vec res = Vec(0.f, 0.f, 0.f);
@@ -98,17 +99,18 @@ Vec Boat::hullResistance(float time)
 		res = vel * (-1 / v);
 
 		µ = 2.41 * 0.00001 * salt * pow(10, (247.8 / (T - 140)));
-		Re = (DENSITY_WATER*v*0.7*wL) / µ;
-		CF = 3 / pow((40 * (log(Re) - 2)), 2);
+		Re = ((float)DENSITY_WATER*v*0.7*wL) / µ;
+		CF = 3 / (40 * (log10(Re) - 2) * (log10(Re) - 2));
 		CH = CF + CW;
-		res *= 0.5*DENSITY_WATER*wA*CH*v*v;
+		float F = 0.5*(float)DENSITY_WATER*wA*CH*v*v;
+		res *= F;
 	}
 	return res;
 }
 
 void Boat::calcForce(float time, Vec trueWind)
 {
-	Vec res = this->windCalc(time, trueWind) + this->waterDragCalc(time) + this->hullResistance(time);
+	Vec res = this->windCalc(trueWind) + this->waterDragCalc() + this->hullResistance();
 	acc = res * (1 / mass);
 	update(time);
 }
@@ -132,3 +134,21 @@ Vec Boat::getKeelLift() const
 {
 	return keelLift;
 }
+
+Vec Boat::getMainSailAngle() const
+{
+	Vec angle;
+	if (mainSail != -1)
+		angle = sails[mainSail]->getAngle();
+	else
+		angle = Vec(0.f, 0.f, 0.f);
+
+	return angle;
+}
+
+void Boat::setMainSailAngle(Vec angle)
+{
+	if (mainSail != -1)
+		sails[mainSail]->setAngle(angle);
+}
+

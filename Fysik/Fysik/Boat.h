@@ -14,6 +14,7 @@ private:
 	float mass;
 	Sail ** sails; // max size = 2
 	int nrOfSails;
+	int mainSail;
 	Keel *keel;
 
 	Vec sailLift;
@@ -29,11 +30,11 @@ public:
 	
 	Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const Keel & keel);
 
-	Vec windCalc(float time, Vec trueWind);
+	Vec windCalc(Vec trueWind);
 
-	Vec waterDragCalc(float time);
+	Vec waterDragCalc();
 
-	Vec hullResistance(float time);
+	Vec hullResistance();
 
 	void calcForce(float time, Vec trueWind);
 
@@ -42,6 +43,9 @@ public:
 
 	Vec getKeelDrag() const;
 	Vec getKeelLift() const;
+
+	Vec getMainSailAngle() const;
+	void setMainSailAngle(Vec angle);
 };
 
 #endif
