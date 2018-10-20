@@ -135,9 +135,20 @@ void Boat::rudderRotationCalc(float time)
 
 		Vec force = rudderDrag + rudderLift;
 
-		float length = force.dot(keel->getAngle()); //since keelAngle.length == 1 we do not need a division of it.
+		/*float length = force.dot(keel->getAngle()); //since keelAngle.length == 1 we do not need a division of it.
 
-		force = force - keel->getAngle() * length; // sideforce
+		force = force - keel->getAngle() * length; // sideforce*/
+		float angleToKeel = force.dot(keel->getAngle()) / force.getLength();
+		if (angleToKeel < -1.00000000)
+		{
+			angleToKeel = -1.0000000;
+		}
+		else if (angleToKeel > 1.000000000)
+		{
+			angleToKeel = 1.00000000;
+		}
+		float sinAngle = sin(acos(angleToKeel));
+		force = force * sinAngle;
 
 		float r = 3; //distance from center of mass in boat.
 
@@ -148,11 +159,17 @@ void Boat::rudderRotationCalc(float time)
 		float inertia = ((float)1 / 12)*mass*boatLength*boatLength + ((float)1 / 4)*mass*(boatWidth*boatWidth / 4);
 
 		float angleAcceleration = torque / inertia;
-		angle -= angleAcceleration * time;
-		keel->rotate(-angleAcceleration * time);
+
+		if (sinAngle - PI / 2 > 0)
+		{
+			angleAcceleration *= -1;
+		}
+
+		angle += angleAcceleration * time;
+		keel->rotate(angleAcceleration * time);
 		for (int i = 0; i < nrOfSails; i++)
-			sails[i]->rotate(-angleAcceleration * time);
-		rudder->rotate(-angleAcceleration * time);
+			sails[i]->rotate(angleAcceleration * time);
+		rudder->rotate(angleAcceleration * time);
 	}
 }
 
@@ -189,28 +206,66 @@ Vec Boat::getRudderLift() const
 float Boat::getAngle() const
 {
 	float res = keel->getAngle().dot(Vec(0.0f, -1.0f, 0.0f));
+	if (res < -1.00000000)
+	{
+		res = -1.0;
+	}
+	else if (res > 1.0000000)
+	{
+		res = 1.0;
+	}
 	res = (float)acos(res) * 360 / (2 * PI);
+
+	if (keel->getAngle().crossProd(Vec(0.0f, -1.0f, 0.0f)).getZ() > 0.00000001)
+	{
+		res *= -1;
+	}
 	return res;
 }
 
 float Boat::getSailAngle() const
 {
 	float res = sails[0]->getAngle().dot(Vec(0.0f, -1.0f, 0.0f));
+	if (res < -1.00000000)
+	{
+		res = -1.0;
+	}
+	else if (res > 1.0000000)
+	{
+		res = 1.0;
+	}
 	res = (float)acos(res) * 360 / (2 * PI);
+	if (sails[0]->getAngle().crossProd(Vec(0.0f, -1.0f, 0.0f)).getZ() > 0.00000001)
+	{
+		res *= -1;
+	}
 	return res;
 }
 
 float Boat::rudderAngle() const
 {
 	float res = rudder->getAngle().dot(Vec(0.0f, -1.0f, 0.0f));
+	if (res < -1.00000000)
+	{
+		res = -1.0;
+	}
+	else if (res > 1.0000000)
+	{
+		res = 1.0;
+	}
 	res = (float)acos(res) * 360 / (2 * PI);
+	if (rudder->getAngle().crossProd(Vec(0.0f, -1.0f, 0.0f)).getZ() > 0.00000001)
+	{
+		res *= -1;
+	}
 	return res;
 }
 
 void Boat::setRudderDisplacement(const float & value)
 {
 	float angleInRadians = value * 2 * PI / 360;
-	float val = rudder->getRotation() - rudderDisplacement + angleInRadians;
+	float val =  angleInRadians + keel->getRotation();
+
 	rudder->setRotation(val);
 	rudderDisplacement = value;
 }

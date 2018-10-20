@@ -40,7 +40,9 @@ void Sail::setBase(float newBase)
 
 void Sail::setAngle(const Vec & value)
 {
-	angle = value * (1/sqrtf(value.getX()*value.getX() + value.getY()*value.getY() + value.getZ()*value.getZ()));
+	float len = value.getX()*value.getX() + value.getY()*value.getY() + value.getZ()*value.getZ();
+
+	angle = value * (1/sqrtf(len));
 }
 
 void Sail::setRotation(const float & value)
