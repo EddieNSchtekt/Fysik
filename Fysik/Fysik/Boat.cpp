@@ -168,7 +168,6 @@ void Boat::rudderRot(float time)
 
 		keelAngle *= (1/keelAngle.getLength());
 		keel->setAngle(keelAngle);
-		rudder->setAngle(keelAngle);
 	}
 }
 
@@ -220,6 +219,17 @@ void Boat::setMainSailAngle(Vec angle)
 
 	if (mainSail != -1)
 		sails[mainSail]->setAngle(Vec(keel->getAngle().getX()*cos(displacement) + keel->getAngle().getY()*sin(displacement), -keel->getAngle().getX()*sin(displacement) + keel->getAngle().getY()*cos(displacement)));
+}
+
+Vec Boat::getRudderAngle() const
+{
+	return rudder->getAngle();
+}
+
+void Boat::setRudderAngle(Vec angle) const
+{
+	float displacement = atan2f(angle.getX(), -angle.getY());
+	rudder->setAngle(Vec(keel->getAngle().getX()*cos(displacement) + keel->getAngle().getY()*sin(displacement), -keel->getAngle().getX()*sin(displacement) + keel->getAngle().getY()*cos(displacement)));
 }
 
 float Boat::getAngle()

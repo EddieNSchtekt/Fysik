@@ -104,14 +104,16 @@ int main()
 	float t = 0.0f;
 	float clearCounter = 0.0f;
 
-	float windVel = 30; //Pixels per second. One meter is approximately 4 pixels
+	float windVel = 5; //Pixels per second. One meter is approximately 4 pixels
 	float windAngle = 0; // Degrees
 	Vec wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 
 	float sailAngle = o.getMainSailAngle().dot(Vec(0.f, -1.f, 0.f));
 	sailAngle = acos(sailAngle) * 360 / (2 * PI);
 
-	float boatAngle = o.getAngle() * 360 / (2 * PI);
+	float rudderAngle = o.getRudderAngle().dot(Vec(0.f, -1.f, 0.f));
+	rudderAngle = acos(rudderAngle) * 360 / (2 * PI);
+
 	
 	float x = WINDOW_WIDTH / 2;
 	float y = WINDOW_HEIGHT / 2;
@@ -158,12 +160,12 @@ int main()
 
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
 				{
-					boatAngle++;
+					rudderAngle++;
 				}
 
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
 				{
-					boatAngle--;
+					rudderAngle--;
 				}
 			}
 		}
@@ -264,7 +266,7 @@ int main()
 
 		wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 		o.setMainSailAngle(Vec(sin(sailAngle*(2 * PI) / 360), -cos(sailAngle*(2 * PI) / 360), 0));
-		//o.setAngle(Vec(sin(boatAngle*(2 * PI) / 360), -cos(boatAngle*(2 * PI) / 360), 0));
+		o.setRudderAngle(Vec(sin(rudderAngle*(2 * PI) / 360), -cos(rudderAngle*(2 * PI) / 360), 0));
 
 		appWind = appWind * (1 / appWind.getLength());
 		float appWindAngle = appWind.dot(Vec(0.f, -1.f, 0.f));
@@ -277,9 +279,12 @@ int main()
 
 		arrow.setRotation(windAngle);
 		arrow2.setRotation(appWindAngle);
+
 		float mainSailAngle = atan2f(o.getMainSailAngle().getX(), -o.getMainSailAngle().getY())*360/(2*PI);
 		mainSail.setRotation(mainSailAngle);
+
 		float boatRotation = boatSprite.getRotation() * 2 * PI / 360;
+
 		mainSail.setPosition(boatSprite.getPosition().x + (cos(boatRotation) + 10*sin(boatRotation)), boatSprite.getPosition().y + (-10*cos(boatRotation)+ sin(boatRotation)));
 
 		window.clear();
