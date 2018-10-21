@@ -141,36 +141,43 @@ void Boat::rudderRot(float time)
 {
 	// Determine the angle in comparison to the rest of the boat.
 	Vec force = rudderDrag + rudderLift;
-	float angleToKeel = force.dot(keel->getAngle()) * (1 / force.getLength());
-
-	if (angleToKeel < -1.00000000)
+	if (force.getLength() > 0.0000000001)
 	{
-		angleToKeel = -1.0000000;
+		float angleToKeel = force.dot(keel->getAngle()) * (1 / force.getLength());
+
+		if (angleToKeel < -1.00000000)
+		{
+			angleToKeel = -1.0000000;
+		}
+		else if (angleToKeel > 1.000000000)
+		{
+			angleToKeel = 1.00000000;
+		}
+		angleToKeel = acos(angleToKeel);
+		// torque = F * sin(angle) * r
+		float forceSize = force.getLength() * sin(angleToKeel);
+		float torque = forceSize * 3;
+		float boatWidth = 3.7;
+		float boatLen = 12.2;
+
+		float inertia = (1.0f / 12.0f)* mass * boatLen*boatLen + (1.0f / 4.0f)*mass*boatWidth*boatWidth / 4.0f;
+
+		float angleAcceleration = torque / inertia;
+
+		float angleSpeed = angleAcceleration * time;
+
+		Vec keelAngle = keel->getAngle();
+
+		keelAngle = Vec(keelAngle.getX()*cos(angleSpeed) + keelAngle.getY()*sin(angleSpeed), keelAngle.getY()*cos(angleSpeed) - keelAngle.getX()*sin(angleSpeed));
+		keelAngle *= (1/keelAngle.getLength());
+		keel->setAngle(keelAngle);
 	}
-	else if (angleToKeel > 1.000000000)
-	{
-		angleToKeel = 1.00000000;
-	}
-
-	// torque = F * sin(angle) * r
-	float torque = force.getLength() * sin(acos(angleToKeel)) * 3;
-	float boatWidth = 3;
-	float boatLen = 13;
-
-	float inertia = (1.0f / 12.0f)* mass * boatLen*boatLen + (1.0f / 4.0f)*mass*boatWidth*boatWidth / 4.0f;
-
-	float angleAcceleration = torque / inertia;
-
-	float angleSpeed = angleAcceleration * time;
-
-	Vec rotation(sin(angleSpeed), -cos(angleSpeed),0.0f);
-
-
 }
 
 void Boat::calcForce(float time, Vec trueWind)
 {
-	Vec res = this->windCalc(trueWind) + this->waterDragCalc() + this->hullResistance();
+	Vec res = this->windCalc(trueWind) + this->waterDragCalc() + this->rudderCalc() + this->hullResistance();
+	//this->rudderRot(time);
 	acc = res * (1 / mass);
 	update(time);
 }
