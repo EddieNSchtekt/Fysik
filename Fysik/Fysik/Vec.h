@@ -38,6 +38,7 @@ public:
 	Vec operator-=(const Vec & other);
 	Vec operator-(const Vec & other) const;
 	Vec & operator*=(const Vec & other);
+	Vec operator*(const Vec & other) const;
 	Vec & operator*=(const float & other);
 	Vec operator*(const float & other) const;
 	Vec & operator=(const Vec & other);

@@ -121,6 +121,11 @@ Vec & Vec::operator*=(const Vec & other)
 	return *this;
 }
 
+Vec Vec::operator *(const Vec & other) const
+{
+	return Vec(x*other.x, y*other.y, z*other.z);
+}
+
 Vec & Vec::operator*=(const float & other)
 {
 	x = other * x;

@@ -140,8 +140,8 @@ Vec Boat::rudderCalc()
 void Boat::rudderRot(float time)
 {
 	// Determine the angle in comparison to the rest of the boat.
-
-	float angleToKeel = res.dot(keel->getAngle()) * (1 / res.getLength());
+	Vec force = rudderDrag + rudderLift;
+	float angleToKeel = force.dot(keel->getAngle()) * (1 / force.getLength());
 
 	if (angleToKeel < -1.00000000)
 	{
@@ -153,7 +153,7 @@ void Boat::rudderRot(float time)
 	}
 
 	// torque = F * sin(angle) * r
-	float torque = res.getLength() * sin(acos(angleToKeel)) * 3;
+	float torque = force.getLength() * sin(acos(angleToKeel)) * 3;
 	float boatWidth = 3;
 	float boatLen = 13;
 
@@ -162,6 +162,10 @@ void Boat::rudderRot(float time)
 	float angleAcceleration = torque / inertia;
 
 	float angleSpeed = angleAcceleration * time;
+
+	Vec rotation(sin(angleSpeed), -cos(angleSpeed),0.0f);
+
+
 }
 
 void Boat::calcForce(float time, Vec trueWind)
