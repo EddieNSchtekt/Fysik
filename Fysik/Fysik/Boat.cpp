@@ -1,6 +1,6 @@
 #include "Boat.h"
 
-Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const SailMain & sailMain, const Keel & keel) : PhysicalObject(pos, vel, acc), sailDrag(0.0f, 0.0f, 0.0f), sailLift(0.0f, 0.0f, 0.0f), keelDrag(0.0f, 0.0f, 0.0f), keelLift(0.0f, 0.0f, 0.0f)
+Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const SailMain & sailMain, const Keel & keel, const Keel & rudder) : PhysicalObject(pos, vel, acc), sailDrag(0.0f, 0.0f, 0.0f), sailLift(0.0f, 0.0f, 0.0f), keelDrag(0.0f, 0.0f, 0.0f), keelLift(0.0f, 0.0f, 0.0f)
 {
 	this->mass = mass;
 	sails = new Sail*[2];
@@ -9,9 +9,10 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 	nrOfSails = 2;
 	mainSail = 1;
 	this->keel = new Keel(keel);
+	this->rudder = new Keel(rudder);
 }
 
-Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const SailMain & sailMain, const Keel & keel) : PhysicalObject(pos, vel, acc), sailDrag(0.0f, 0.0f, 0.0f), sailLift(0.0f, 0.0f, 0.0f), keelDrag(0.0f, 0.0f, 0.0f), keelLift(0.0f, 0.0f, 0.0f)
+Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const SailMain & sailMain, const Keel & keel, const Keel & rudder) : PhysicalObject(pos, vel, acc), sailDrag(0.0f, 0.0f, 0.0f), sailLift(0.0f, 0.0f, 0.0f), keelDrag(0.0f, 0.0f, 0.0f), keelLift(0.0f, 0.0f, 0.0f)
 {
 	this->mass = mass;
 	sails = new Sail*[1];
@@ -19,9 +20,10 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 	nrOfSails = 1;
 	mainSail = 0;
 	this->keel = new Keel(keel);
+	this->rudder = new Keel(rudder);
 }
 
-Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const Keel & keel) : PhysicalObject(pos, vel, acc), sailDrag(0.0f, 0.0f, 0.0f), sailLift(0.0f, 0.0f, 0.0f), keelDrag(0.0f, 0.0f, 0.0f), keelLift(0.0f, 0.0f, 0.0f)
+Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const Keel & keel, const Keel & rudder) : PhysicalObject(pos, vel, acc), sailDrag(0.0f, 0.0f, 0.0f), sailLift(0.0f, 0.0f, 0.0f), keelDrag(0.0f, 0.0f, 0.0f), keelLift(0.0f, 0.0f, 0.0f)
 {
 	this->mass = mass;
 	sails = new Sail*[1];
@@ -29,6 +31,7 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 	nrOfSails = 1;
 	mainSail = -1;
 	this->keel = new Keel(keel);
+	this->rudder = new Keel(rudder);
 }
 
 Vec Boat::windCalc(Vec trueWind)
