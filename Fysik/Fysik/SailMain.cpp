@@ -26,7 +26,7 @@ float SailMain::CL(const Vec & apparentWind)
 		res = 0.00f;
 
 	float cross = (this->angle.crossProd(apparentWind)).getZ();
-	if (cross < 0 && angle < 90 || cross > 0 && angle > 90)
+	if (cross < 0 && angle < 91 || cross > 0 && angle > 90)
 	{
 		res = -res;
 	}

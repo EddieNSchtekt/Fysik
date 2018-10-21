@@ -2,6 +2,9 @@
 
 #include "Boat.h"
 
+#define WINDOW_WIDTH 204
+#define WINDOW_HEIGHT 204
+
 void representVector(Vec vec, sf::RectangleShape * rect)
 {
 	rect->setSize(sf::Vector2f(vec.getLength() / 4, 3));
@@ -18,21 +21,22 @@ void representVector(Vec vec, sf::RectangleShape * rect)
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
 	sf::CircleShape shape(10.f);
 	shape.setFillColor(sf::Color::Green);
 	sf::Clock cl;
 
 	sf::Sprite bg;
 	sf::Texture bgTexture;
-	int bgSize = 200;
+	int bgSize = 272;
 	float keyFrame = 0;
-	if (!bgTexture.loadFromFile("Images/Background.png"))
+	if (!bgTexture.loadFromFile("Images/BackgroundNew.png"))
 	{
 		//Error!
 	}
 	bg.setTexture(bgTexture);
 	bg.setTextureRect(sf::IntRect(0, 0, bgSize, bgSize));
+	bg.setOrigin(34, 34);
 
 	sf::Sprite boatSprite;
 	sf::Texture boatTexture;
@@ -44,6 +48,7 @@ int main()
 	boatSprite.setTexture(boatTexture);
 	boatSprite.setTextureRect(sf::IntRect(0, 0, boatWidth, boatHeight));
 	boatSprite.setOrigin(boatWidth / 2, boatHeight / 2);
+	boatSprite.setPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 
 	sf::Sprite mainSail;
 	sf::Texture mainSailTex;
@@ -55,6 +60,7 @@ int main()
 	mainSail.setTexture(mainSailTex);
 	mainSail.setTextureRect(sf::IntRect(0, 0, sailWidth, sailHeight));
 	mainSail.setOrigin(sailWidth / 2, (sailHeight / 2) - 12);
+	mainSail.setPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 12);
 
 	sf::Sprite arrow;
 	sf::Texture arrowTex;
@@ -66,7 +72,7 @@ int main()
 	arrow.setTexture(arrowTex);
 	arrow.setTextureRect(sf::IntRect(0, 0, arrowSize, arrowSize));
 	arrow.setOrigin(arrowSize / 2, arrowSize / 2);
-	arrow.setPosition(arrowSize / 2, bgSize - arrowSize / 2);
+	arrow.setPosition(arrowSize / 2, WINDOW_HEIGHT - arrowSize / 2);
 
 	sf::Sprite arrow2;
 	sf::Texture arrow2Tex;
@@ -78,9 +84,9 @@ int main()
 	arrow2.setTexture(arrow2Tex);
 	arrow2.setTextureRect(sf::IntRect(0, 0, arrow2Size, arrow2Size));
 	arrow2.setOrigin(arrow2Size / 2, arrow2Size / 2);
-	arrow2.setPosition(arrow2Size / 2, bgSize - arrow2Size * 2);
+	arrow2.setPosition(arrow2Size / 2, WINDOW_HEIGHT - arrow2Size * 2);
 
-	Boat o(8120, Vec(bgSize/2, bgSize/2, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15.1, 4.7,Vec(0.0, -1.0, 0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1.50, 1.85, 1.05, Vec(0.0, -1.0, 0.0)));
+	Boat o(8120, Vec(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15.1, 4.7,Vec(0.0, -1.0, 0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1.50, 1.85, 1.05, Vec(0.0, -1.0, 0.0)));
 
 	sf::RectangleShape l(sf::Vector2f(10, 3));
 	l.setPosition(o.getPos().getX(), o.getPos().getY());
@@ -98,13 +104,14 @@ int main()
 	float clearCounter = 0.0f;
 
 	float windVel = 30; //Pixels per second. One meter is approximately 4 pixels
-	float windAngle = 90; // Degrees
+	float windAngle = -90; // Degrees
 	Vec wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 
 	float sailAngle = o.getMainSailAngle().dot(Vec(0.f, -1.f, 0.f));
 	sailAngle = acos(sailAngle) * 360 / (2 * PI);
 	
-	int waveDir = 0;
+	float x = WINDOW_WIDTH / 2;
+	float y = WINDOW_HEIGHT / 2;
 	while (window.isOpen())
 	{
 		t = cl.restart().asSeconds();
@@ -147,8 +154,12 @@ int main()
 			}
 		}
 		o.calcForce(t, wind);
-		float x = o.getPos().getX();
-		float y = o.getPos().getY();
+
+		float moveX = x - o.getPos().getX();
+		float moveY = y - o.getPos().getY();
+
+		x = o.getPos().getX();
+		y = o.getPos().getY();
 
 		float vel = o.getVel().getLength();
 		float spdX = o.getVel().getX();
@@ -176,47 +187,50 @@ int main()
 			clearCounter = 0;
 			printf("X : %f\nY: %f\nBoat Velocity: %f\nBoat Direction: (%f,%f)\nWind Velocity: %f\nWind Direction: (%f,%f)\nApparent Wind Velocity: %f\nApparent Wind Direction: (%f,%f)", x, y, vel, dirX, dirY, windVel, windDirX, windDirY, appWind.getLength(), appWindDirX, appWindDirY);
 		}
-		boatSprite.setPosition(x, y);
+
+		bg.move(moveX, moveY);  
+
+		/*boatSprite.setPosition(x, y);
 		mainSail.setPosition(x, y - 12);
 		l.setPosition(x-boatWidth/2, y-boatHeight/2);
 		d.setPosition(x-boatWidth/2, y-boatHeight/2);
 		kl.setPosition(x - boatWidth / 2, y - boatHeight / 2);
 		kd.setPosition(x - boatWidth / 2, y - boatHeight / 2);
+		if (y < -boatHeight / 2)
+		{
+			o.setPos(Vec(x, WINDOW_HEIGHT + boatHeight / 2, 0));
+		}
+		else if (y > WINDOW_HEIGHT + boatHeight / 2)
+		{
+			o.setPos(Vec(x, -boatHeight / 2, 0));
+		}
+		if (x > WINDOW_WIDTH + boatWidth / 2)
+		{
+			o.setPos(Vec(-boatWidth / 2, y, 0));
+		}
+		else if (x < -boatWidth / 2)
+		{
+			o.setPos(Vec(WINDOW_WIDTH + boatWidth / 2, y, 0));
+		}*/
 
-		if (y < -boatHeight/2)
+		if (bg.getPosition().y < -34)
 		{
-			o.setPos(Vec(x, bgSize + boatHeight/2, 0));
+			bg.setPosition(bg.getPosition().x, 34);
 		}
-		else if (y > bgSize + boatHeight/2)
+		else if (bg.getPosition().y > 34)
 		{
-			o.setPos(Vec(x, -boatHeight/2, 0));
+			bg.setPosition(bg.getPosition().x, -34);
 		}
-		if (x > bgSize + boatWidth/2)
+		if (bg.getPosition().x > 34)
 		{
-			o.setPos(Vec(-boatWidth/2, y, 0));
+			bg.setPosition(-34, bg.getPosition().y);
 		}
-		else if (x < -boatWidth/2)
+		else if (bg.getPosition().x < -34)
 		{
-			o.setPos(Vec(bgSize + boatWidth/2, y, 0));
-		}
-
-		if (wind.getX() > 0)
-		{
-			if (wind.getY() > 0)
-				waveDir = 0;
-			else
-				waveDir = 1;
-		}
-		else
-		{
-			if (wind.getY() < 0)
-				waveDir = 2;
-			else
-				waveDir = 3;
+			bg.setPosition(34, bg.getPosition().y);
 		}
 
-
-		bg.setTextureRect(sf::IntRect(bgSize*((int)keyFrame%8), bgSize*waveDir, bgSize, bgSize));
+		bg.setTextureRect(sf::IntRect(bgSize*((int)keyFrame%4), 0, bgSize, bgSize));
 		boatSprite.setTextureRect(sf::IntRect(boatWidth*((int)(keyFrame/2) % 2), 0, boatWidth, boatHeight));
 		keyFrame += 0.0003 * log(abs(windVel)+1);
 
@@ -226,6 +240,11 @@ int main()
 		appWind = appWind * (1 / appWind.getLength());
 		float appWindAngle = appWind.dot(Vec(0.f, -1.f, 0.f));
 		appWindAngle = acos(appWindAngle) * 360 / (2 * PI);
+		float cross = (Vec(0.f,-1.f,0.f).crossProd(appWind)).getZ();
+		if (cross < 0)
+		{
+			appWindAngle *= -1;
+		}
 
 		arrow.setRotation(windAngle);
 		arrow2.setRotation(appWindAngle);
@@ -237,10 +256,12 @@ int main()
 		window.draw(mainSail);
 		window.draw(arrow);
 		window.draw(arrow2);
+
 		/*window.draw(l);
 		window.draw(d);
 		window.draw(kl);
 		window.draw(kd);*/
+
 		window.display();
 	}
 
