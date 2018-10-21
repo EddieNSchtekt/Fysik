@@ -15,6 +15,7 @@ private:
 	Sail ** sails; // max size = 2
 	int nrOfSails;
 	int mainSail;
+	float rudderDisplacement;
 	Keel *keel;
 	Keel * rudder;
 

@@ -145,6 +145,7 @@ void Boat::rudderRot(float time)
 	{
 		double keelX = keel->getAngle().getX()/keel->getAngle().getLength();
 		double keelY = keel->getAngle().getY() / keel->getAngle().getLength();
+
 		double forceX = force.getX() / force.getLength();
 		double forceY = force.getY() / force.getLength();
 
@@ -166,19 +167,18 @@ void Boat::rudderRot(float time)
 		keelAngle = Vec(keelAngle.getX()*cos(angleSpeed) + keelAngle.getY()*sin(angleSpeed), keelAngle.getY()*cos(angleSpeed) - keelAngle.getX()*sin(angleSpeed));
 
 		keelAngle *= (1/keelAngle.getLength());
-		//keel->setAngle(keelAngle);
-		//rudder->setAngle(keelAngle);
+		keel->setAngle(keelAngle);
+		rudder->setAngle(keelAngle);
 	}
 }
 
 void Boat::calcForce(float time, Vec trueWind)
 {
-	this->rudderCalc();
-	Vec res = this->windCalc(trueWind) + this->waterDragCalc() + this->hullResistance();
+	Vec res = this->windCalc(trueWind) + this->waterDragCalc() + this->rudderCalc() + this->hullResistance();
 	float durp = keel->getAngle().getX() - keel->getAngle().getY();
 
 	//res = Vec(0.0f, 0.0f, 0.0f);
-	//this->rudderRot(time);
+	this->rudderRot(time);
 	acc = res * (1 / mass);
 	update(time);
 }

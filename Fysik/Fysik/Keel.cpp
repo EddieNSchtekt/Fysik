@@ -17,7 +17,16 @@ float Keel::CL(const Vec & waterFlow)
 {
 	float angle = this->angle.dot(waterFlow);
 	angle = angle / (sqrt(waterFlow.getX()*waterFlow.getX() + waterFlow.getY()*waterFlow.getY())*this->angle.getLength());
+	if (angle > 1.0000)
+	{
+		angle = 1.000000;
+	}
+	else if (angle < -1.000000)
+	{
+		angle = -1.000000;
+	}
 	angle = acos(angle) * 360 / (2 * PI);
+
 	angle = 180 - angle;
 	float res = 0;
 
@@ -29,7 +38,7 @@ float Keel::CL(const Vec & waterFlow)
 
 	float cross = (this->angle.crossProd(waterFlow)).getZ();
 
-	if ((cross < 0 && angle < 90) || (cross > 0 && angle > 90))
+	if ((cross < 0 && angle < 91) || (cross > 0 && angle > 91))
 	{
 		res = -res;
 	}
@@ -41,8 +50,17 @@ float Keel::CD(const Vec & waterFlow)
 {
 	float angle = this->angle.dot(waterFlow);
 	angle = angle / (sqrt(waterFlow.getX()*waterFlow.getX() + waterFlow.getY()*waterFlow.getY())*this->angle.getLength());
+	if (angle > 1.0000)
+	{
+		angle = 1.000000;
+	}
+	else if (angle < -1.000000)
+	{
+		angle = -1.000000;
+	}
 	angle = acos(angle) * 360 / (2 * PI);
 	angle = 180 - angle;
+
 	float res = 0;
 
 	float chordMean = (chord1 + chord2) / 2;
