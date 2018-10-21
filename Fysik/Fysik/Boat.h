@@ -24,6 +24,9 @@ private:
 	Vec keelLift;
 	Vec keelDrag;
 
+	Vec rudderLift;
+	Vec rudderDrag;
+
 public:
 	Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc, const Jib & jib, const SailMain & sailMain, const Keel & keel, const Keel & rudder);
 
@@ -36,6 +39,9 @@ public:
 	Vec waterDragCalc();
 
 	Vec hullResistance();
+
+	Vec rudderCalc();
+	void rudderRot(float time);
 
 	void calcForce(float time, Vec trueWind);
 

@@ -111,6 +111,59 @@ Vec Boat::hullResistance()
 	return res;
 }
 
+Vec Boat::rudderCalc()
+{
+	if (vel.getLength() > 0.000001)
+	{
+		Vec waterFlow = vel * -1;
+
+		// viscous drag and lift calculated for the keel.
+		float drag = 0;
+		float lift = 0;
+
+		drag = rudder->CD(waterFlow);
+		lift = rudder->CL(waterFlow);
+
+		float liftForceLength = 0.5*(float)DENSITY_WATER*lift*rudder->area()*(waterFlow).getLength()*(waterFlow).getLength();
+
+		float dragForceLength = 0.5*(float)DENSITY_WATER*drag*rudder->area()*(waterFlow).getLength()*(waterFlow).getLength();
+
+		rudderDrag = waterFlow * (dragForceLength / waterFlow.getLength());
+		rudderLift = Vec(waterFlow.getY(), -waterFlow.getX())*(liftForceLength / waterFlow.getLength());
+	}
+
+	Vec res = rudderDrag + rudderLift;
+
+	return res;
+}
+
+void Boat::rudderRot(float time)
+{
+	// Determine the angle in comparison to the rest of the boat.
+
+	float angleToKeel = res.dot(keel->getAngle()) * (1 / res.getLength());
+
+	if (angleToKeel < -1.00000000)
+	{
+		angleToKeel = -1.0000000;
+	}
+	else if (angleToKeel > 1.000000000)
+	{
+		angleToKeel = 1.00000000;
+	}
+
+	// torque = F * sin(angle) * r
+	float torque = res.getLength() * sin(acos(angleToKeel)) * 3;
+	float boatWidth = 3;
+	float boatLen = 13;
+
+	float inertia = (1.0f / 12.0f)* mass * boatLen*boatLen + (1.0f / 4.0f)*mass*boatWidth*boatWidth / 4.0f;
+
+	float angleAcceleration = torque / inertia;
+
+	float angleSpeed = angleAcceleration * time;
+}
+
 void Boat::calcForce(float time, Vec trueWind)
 {
 	Vec res = this->windCalc(trueWind) + this->waterDragCalc() + this->hullResistance();
