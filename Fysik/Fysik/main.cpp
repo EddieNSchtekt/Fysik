@@ -277,7 +277,10 @@ int main()
 
 		arrow.setRotation(windAngle);
 		arrow2.setRotation(appWindAngle);
-		mainSail.setRotation(sailAngle);
+		float mainSailAngle = atan2f(o.getMainSailAngle().getX(), -o.getMainSailAngle().getY())*360/(2*PI);
+		mainSail.setRotation(mainSailAngle);
+		float boatRotation = boatSprite.getRotation() * 2 * PI / 360;
+		mainSail.setPosition(boatSprite.getPosition().x + (cos(boatRotation) + 10*sin(boatRotation)), boatSprite.getPosition().y + (-10*cos(boatRotation)+ sin(boatRotation)));
 
 		window.clear();
 		window.draw(bg);
@@ -286,10 +289,10 @@ int main()
 		window.draw(arrow);
 		window.draw(arrow2);
 
-		window.draw(l);
+		/*window.draw(l);
 		window.draw(d);
 		window.draw(kl);
-		window.draw(kd);
+		window.draw(kd);*/
 
 		window.display();
 	}

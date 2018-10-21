@@ -216,10 +216,10 @@ Vec Boat::getMainSailAngle() const
 
 void Boat::setMainSailAngle(Vec angle)
 {
-	Vec base = keel->getAngle();
+	float displacement = atan2f(angle.getX(), -angle.getY());
 
 	if (mainSail != -1)
-		sails[mainSail]->setAngle(angle);
+		sails[mainSail]->setAngle(Vec(keel->getAngle().getX()*cos(displacement) + keel->getAngle().getY()*sin(displacement), -keel->getAngle().getX()*sin(displacement) + keel->getAngle().getY()*cos(displacement)));
 }
 
 float Boat::getAngle()
