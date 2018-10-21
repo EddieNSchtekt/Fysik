@@ -53,6 +53,9 @@ public:
 
 	Vec getMainSailAngle() const;
 	void setMainSailAngle(Vec angle);
+
+	float getAngle();
+	void setAngle(Vec angle);
 };
 
 #endif

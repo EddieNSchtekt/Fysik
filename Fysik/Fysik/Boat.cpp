@@ -37,7 +37,7 @@ Boat::Boat(const float & mass, const Vec & pos, const Vec & vel, const Vec & acc
 Vec Boat::windCalc(Vec trueWind)
 {
 	Vec apparentWind = trueWind - vel;
-	
+
 	float drag = 0;
 	float lift = 0;
 	float nomArea = 0;
@@ -68,10 +68,10 @@ Vec Boat::windCalc(Vec trueWind)
 
 Vec Boat::waterDragCalc()
 {
-	if (vel.getLength() > 0.000001)
+	if (vel.getLength() > 0.01)
 	{
-		Vec waterFlow = vel * -1;
 
+		Vec waterFlow = vel * -1;
 		// viscous drag and lift calculated for the keel.
 		float drag = 0;
 		float lift = 0;
@@ -113,7 +113,7 @@ Vec Boat::hullResistance()
 
 Vec Boat::rudderCalc()
 {
-	if (vel.getLength() > 0.000001)
+	if (vel.getLength() > 0.01)
 	{
 		Vec waterFlow = vel * -1;
 
@@ -141,42 +141,43 @@ void Boat::rudderRot(float time)
 {
 	// Determine the angle in comparison to the rest of the boat.
 	Vec force = rudderDrag + rudderLift;
-	if (force.getLength() > 0.0000000001)
+	if (force.getLength() > 0.00001)
 	{
-		float angleToKeel = force.dot(keel->getAngle()) * (1 / force.getLength());
+		double keelX = keel->getAngle().getX()/keel->getAngle().getLength();
+		double keelY = keel->getAngle().getY() / keel->getAngle().getLength();
+		double forceX = force.getX() / force.getLength();
+		double forceY = force.getY() / force.getLength();
 
-		if (angleToKeel < -1.00000000)
-		{
-			angleToKeel = -1.0000000;
-		}
-		else if (angleToKeel > 1.000000000)
-		{
-			angleToKeel = 1.00000000;
-		}
-		angleToKeel = acos(angleToKeel);
+		double angleToKeel = atan2f(keelX * forceY - keelY * forceX, keelX * forceX + keelY * forceY);
 		// torque = F * sin(angle) * r
-		float forceSize = force.getLength() * sin(angleToKeel);
-		float torque = forceSize * 3;
-		float boatWidth = 3.7;
-		float boatLen = 12.2;
+		double forceSize = force.getLength() * sin(angleToKeel);
+		double torque = forceSize * 3;
+		double boatWidth = 3.7;
+		double boatLen = 12.2;
 
-		float inertia = (1.0f / 12.0f)* mass * boatLen*boatLen + (1.0f / 4.0f)*mass*boatWidth*boatWidth / 4.0f;
+		double inertia = (1.0f / 12.0f)* mass * boatLen*boatLen + (1.0f / 4.0f)*mass*boatWidth*boatWidth / 4.0f;
 
-		float angleAcceleration = torque / inertia;
+		double angleAcceleration = torque / inertia;
 
-		float angleSpeed = angleAcceleration * time;
+		double angleSpeed = angleAcceleration * time;
 
 		Vec keelAngle = keel->getAngle();
 
 		keelAngle = Vec(keelAngle.getX()*cos(angleSpeed) + keelAngle.getY()*sin(angleSpeed), keelAngle.getY()*cos(angleSpeed) - keelAngle.getX()*sin(angleSpeed));
+
 		keelAngle *= (1/keelAngle.getLength());
-		keel->setAngle(keelAngle);
+		//keel->setAngle(keelAngle);
+		//rudder->setAngle(keelAngle);
 	}
 }
 
 void Boat::calcForce(float time, Vec trueWind)
 {
-	Vec res = this->windCalc(trueWind) + this->waterDragCalc() + this->rudderCalc() + this->hullResistance();
+	this->rudderCalc();
+	Vec res = this->windCalc(trueWind) + this->waterDragCalc() + this->hullResistance();
+	float durp = keel->getAngle().getX() - keel->getAngle().getY();
+
+	//res = Vec(0.0f, 0.0f, 0.0f);
 	//this->rudderRot(time);
 	acc = res * (1 / mass);
 	update(time);
@@ -215,7 +216,19 @@ Vec Boat::getMainSailAngle() const
 
 void Boat::setMainSailAngle(Vec angle)
 {
+	Vec base = keel->getAngle();
+
 	if (mainSail != -1)
 		sails[mainSail]->setAngle(angle);
+}
+
+float Boat::getAngle()
+{
+	return atan2f(keel->getAngle().getX(), -keel->getAngle().getY());
+}
+
+void Boat::setAngle(Vec angle)
+{
+	keel->setAngle(angle);
 }
 

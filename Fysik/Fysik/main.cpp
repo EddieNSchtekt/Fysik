@@ -86,7 +86,7 @@ int main()
 	arrow2.setOrigin(arrow2Size / 2, arrow2Size / 2);
 	arrow2.setPosition(arrow2Size / 2, WINDOW_HEIGHT - arrow2Size * 2);
 
-	Boat o(8120, Vec(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15.1, 4.7,Vec(0.0, -1.0, 0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1.50, 1.85, 1.05, Vec(0.0, -1.0, 0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1.47,0.68,0.32,Vec(0.0,-1.0,0.0)));
+	Boat o(8120, Vec(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), SailMain(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 15.1, 4.7,Vec(0.0, -1.0, 0.0)), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1.50, 1.85, 1.05, Vec(-1.0, 1.0, 0.0)*(1 / sqrtf(2))), Keel(Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), Vec(0.0f, 0.0f, 0.0f), 1.47,0.68,0.32, Vec(-1.0, 1.0, 0.0)*(1/sqrtf(2))));
 
 
 	sf::RectangleShape l(sf::Vector2f(10, 3));
@@ -105,17 +105,20 @@ int main()
 	float clearCounter = 0.0f;
 
 	float windVel = 30; //Pixels per second. One meter is approximately 4 pixels
-	float windAngle = -90; // Degrees
+	float windAngle = 45; // Degrees
 	Vec wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 
 	float sailAngle = o.getMainSailAngle().dot(Vec(0.f, -1.f, 0.f));
 	sailAngle = acos(sailAngle) * 360 / (2 * PI);
+
+	float boatAngle = o.getAngle() * 360 / (2 * PI);
 	
 	float x = WINDOW_WIDTH / 2;
 	float y = WINDOW_HEIGHT / 2;
 	while (window.isOpen())
 	{
 		t = cl.restart().asSeconds();
+		t = 0.01;
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -152,6 +155,16 @@ int main()
 				{
 					sailAngle--;
 				}
+
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+				{
+					boatAngle++;
+				}
+
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+				{
+					boatAngle--;
+				}
 			}
 		}
 		o.calcForce(t, wind);
@@ -165,8 +178,14 @@ int main()
 		float vel = o.getVel().getLength();
 		float spdX = o.getVel().getX();
 		float spdY = o.getVel().getY();
-		float dirX = spdX / vel;
-		float dirY = spdY / vel;
+
+		float dirX = 0;
+		float dirY = 0;
+		if (vel > 0.00001)
+		{
+			dirX = spdX / vel;
+			dirY = spdY / vel;
+		}
 
 		float windDirX = wind.getX() / windVel;
 		float windDirY = wind.getY() / windVel;
@@ -177,9 +196,16 @@ int main()
 		representVector(o.getKeelDrag(), &kd);
 		representVector(o.getKeelLift(), &kl);
 
+
+		float appWindDirX = 0;
+		float appWindDirY = 0;
+
 		Vec appWind = wind - o.getVel();
-		float appWindDirX = appWind.getX() / appWind.getLength();
-		float appWindDirY = appWind.getY() / appWind.getLength();
+		if (appWind.getLength() > 0.0001)
+		{
+			appWindDirX = appWind.getX() / appWind.getLength();
+			appWindDirY = appWind.getY() / appWind.getLength();
+		}
 
 		clearCounter += 0.001;
 		if (clearCounter > 1)
@@ -233,10 +259,12 @@ int main()
 
 		bg.setTextureRect(sf::IntRect(bgSize*((int)keyFrame%4), 0, bgSize, bgSize));
 		boatSprite.setTextureRect(sf::IntRect(boatWidth*((int)(keyFrame/2) % 2), 0, boatWidth, boatHeight));
+		boatSprite.setRotation(o.getAngle() *360/(2*PI));
 		keyFrame += 0.0003 * log(abs(windVel)+1);
 
 		wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 		o.setMainSailAngle(Vec(sin(sailAngle*(2 * PI) / 360), -cos(sailAngle*(2 * PI) / 360), 0));
+		o.setAngle(Vec(sin(boatAngle*(2 * PI) / 360), -cos(boatAngle*(2 * PI) / 360), 0));
 
 		appWind = appWind * (1 / appWind.getLength());
 		float appWindAngle = appWind.dot(Vec(0.f, -1.f, 0.f));
@@ -258,10 +286,10 @@ int main()
 		window.draw(arrow);
 		window.draw(arrow2);
 
-		/*window.draw(l);
+		window.draw(l);
 		window.draw(d);
 		window.draw(kl);
-		window.draw(kd);*/
+		window.draw(kd);
 
 		window.display();
 	}
