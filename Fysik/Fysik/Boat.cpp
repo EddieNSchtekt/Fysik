@@ -174,13 +174,14 @@ void Boat::rudderRot(float time)
 		double forceY = force.getY() / force.getLength();
 
 		double angleToKeel = atan2f(keelX * forceY - keelY * forceX, keelX * forceX + keelY * forceY);
+
 		// torque = F * sin(angle) * r
 		double forceSize = force.getLength() * sin(angleToKeel);
-		double torque = forceSize * 3;
+		double torque = forceSize * 1.5;
 		double boatWidth = 3.7;
 		double boatLen = 12.2;
 
-		double inertia = (1.0f / 12.0f)* mass * boatLen*boatLen + (1.0f / 4.0f)*mass*boatWidth*boatWidth / 4.0f;
+		double inertia = (1.0f / 12.0f)* mass * boatLen*boatLen + mass*boatWidth*boatWidth / 16.0f;
 
 		double angleAcceleration = torque / inertia;
 

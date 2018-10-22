@@ -117,6 +117,7 @@ int main()
 
 	float windVel = 30; //Pixels per second. One meter is approximately 4 pixels
 	float windAngle = 90; // Degrees
+
 	Vec wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 
 	float sailAngle = o.getMainSailAngle().dot(Vec(0.f, -1.f, 0.f));
@@ -291,10 +292,10 @@ int main()
 		window.draw(arrow);
 		window.draw(arrow2);
 
-		window.draw(l);
+		/*window.draw(l);
 		window.draw(d);
 		window.draw(kl);
-		window.draw(kd);
+		window.draw(kd);*/
 
 		window.display();
 	}
