@@ -174,7 +174,7 @@ void Boat::rudderRot(float time)
 void Boat::calcForce(float time, Vec trueWind)
 {
 	Vec res = this->windCalc(trueWind) + this->waterDragCalc() + this->rudderCalc() + this->hullResistance();
-	float durp = keel->getAngle().getX() - keel->getAngle().getY();
+	//float durp = keel->getAngle().getX() - keel->getAngle().getY();
 
 	//res = Vec(0.0f, 0.0f, 0.0f);
 	this->rudderRot(time);
