@@ -175,7 +175,6 @@ void Boat::rudderRot(float time)
 
 		double angleToKeel = atan2f(keelX * forceY - keelY * forceX, keelX * forceX + keelY * forceY);
 
-		// torque = F * sin(angle) * r
 		double forceSize = force.getLength() * sin(angleToKeel);
 		double torque = forceSize * 1.5;
 		double boatWidth = 3.7;

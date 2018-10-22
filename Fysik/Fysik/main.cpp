@@ -128,6 +128,7 @@ int main()
 
 	float x = WINDOW_WIDTH / 2;
 	float y = WINDOW_HEIGHT / 2;
+	int showVectors = 0;
 	while (window.isOpen())
 	{
 		t = cl.restart().asSeconds();
@@ -184,6 +185,11 @@ int main()
 					if(rudderAngle < -45)
 						rudderAngle = -45;
 				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+				{
+					showVectors++;
+					showVectors %= 2;
+				}
 			}
 		}
 		o.calcForce(t, wind);
@@ -208,13 +214,6 @@ int main()
 
 		float windDirX = wind.getX() / windVel;
 		float windDirY = wind.getY() / windVel;
-		
-		representVector(o.getSailLift(), &l);
-		representVector(o.getSailDrag(), &d);
-
-		representVector(o.getKeelDrag(), &kd);
-		representVector(o.getKeelLift(), &kl);
-
 
 		float appWindDirX = 0;
 		float appWindDirY = 0;
@@ -234,6 +233,14 @@ int main()
 			printf("X : %f\nY: %f\nBoat Velocity: %f\nBoat Direction: (%f,%f)\nWind Velocity: %f\nWind Direction: (%f,%f)\nApparent Wind Velocity: %f\nApparent Wind Direction: (%f,%f)", x, y, vel, dirX, dirY, windVel, windDirX, windDirY, appWind.getLength(), appWindDirX, appWindDirY);
 		}
 
+		//Visualise force vectors
+		representVector(o.getSailLift(), &l);
+		representVector(o.getSailDrag(), &d);
+
+		representVector(o.getKeelDrag(), &kd);
+		representVector(o.getKeelLift(), &kl);
+
+		//Update movement
 		bg.move(moveX, moveY);
 
 		if (bg.getPosition().y < -34)
@@ -252,37 +259,38 @@ int main()
 		{
 			bg.setPosition(34, bg.getPosition().y);
 		}
-
+		//Update sprites
 		bg.setTextureRect(sf::IntRect(bgSize*((int)keyFrame%4), 0, bgSize, bgSize));
 		boatSprite.setTextureRect(sf::IntRect(boatWidth*((int)(keyFrame/2) % 2), 0, boatWidth, boatHeight));
-		boatSprite.setRotation(o.getAngle() *360/(2*PI));
 		keyFrame += 0.0003 * log(abs(windVel)+1);
 
+		//Update sail and rudder
 		wind = Vec(sin(windAngle*(2 * PI) / 360), -cos(windAngle*(2 * PI) / 360), 0) * windVel;
 		o.setMainSailAngle(Vec(sin(sailAngle*(2 * PI) / 360), -cos(sailAngle*(2 * PI) / 360), 0));
 		o.setRudderAngle(Vec(sin(rudderAngle*(2 * PI) / 360), -cos(rudderAngle*(2 * PI) / 360), 0));
 
-		appWind = appWind * (1 / appWind.getLength());
-		float appWindAngle = appWind.dot(Vec(0.f, -1.f, 0.f));
-		appWindAngle = acos(appWindAngle) * 360 / (2 * PI);
-		float cross = (Vec(0.f,-1.f,0.f).crossProd(appWind)).getZ();
-		if (cross < 0)
-		{
-			appWindAngle *= -1;
-		}
-
-		arrow.setRotation(windAngle);
-		arrow2.setRotation(appWindAngle);
-
+		//Rotate sprites
+		boatSprite.setRotation(o.getAngle() * 360 / (2 * PI));
 		float mainSailAngle = atan2f(o.getMainSailAngle().getX(), -o.getMainSailAngle().getY())*360/(2*PI);
 		mainSail.setRotation(mainSailAngle);
 		float rudderAngle = atan2f(o.getRudderAngle().getX(), -o.getRudderAngle().getY()) * 360 / (2 * PI);
 		rudder.setRotation(rudderAngle);
-
 		float boatRotation = boatSprite.getRotation() * 2 * PI / 360;
-
 		mainSail.setPosition(boatSprite.getPosition().x + (19*sin(boatRotation)), boatSprite.getPosition().y + (-19*cos(boatRotation)));
 		rudder.setPosition(boatSprite.getPosition().x + (-12 * sin(boatRotation)), boatSprite.getPosition().y + (12 * cos(boatRotation)));
+
+		//Update wind
+		appWind = appWind * (1 / appWind.getLength());
+		float appWindAngle = appWind.dot(Vec(0.f, -1.f, 0.f));
+		appWindAngle = acos(appWindAngle) * 360 / (2 * PI);
+		float cross = (Vec(0.f, -1.f, 0.f).crossProd(appWind)).getZ();
+		if (cross < 0)
+		{
+			appWindAngle *= -1;
+		}
+		//Rotate wind direction arrows
+		arrow.setRotation(windAngle);
+		arrow2.setRotation(appWindAngle);
 
 		window.clear();
 		window.draw(bg);
@@ -291,12 +299,13 @@ int main()
 		window.draw(mainSail);
 		window.draw(arrow);
 		window.draw(arrow2);
-
-		/*window.draw(l);
-		window.draw(d);
-		window.draw(kl);
-		window.draw(kd);*/
-
+		if (showVectors == 1)
+		{
+			window.draw(l);
+			window.draw(d);
+			window.draw(kl);
+			window.draw(kd);
+		}
 		window.display();
 	}
 
