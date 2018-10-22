@@ -70,8 +70,12 @@ Vec Boat::windCalc(Vec trueWind)
 	aspectRatio *= aspectRatio / nomArea;
 
 	float inducedDrag = lift * lift*(1 / (PI*aspectRatio) + 0.005);
+	
+	float maxBeam = 3.71;
+	float avgMastDiameter = 0.173;
+	float hullAndMastDrag = 1.13*((maxBeam*averageFreeBoard) + (mastHeight*avgMastDiameter)) / nomArea;
 
-	drag += inducedDrag;
+	drag += inducedDrag + hullAndMastDrag;
 
 	float liftForceLength = 0.5*(float)DENSITY_AIR*lift*sails[0]->area()*(apparentWind).getLength()*(apparentWind).getLength();
 

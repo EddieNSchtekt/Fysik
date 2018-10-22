@@ -7,7 +7,7 @@
 
 void representVector(Vec vec, sf::RectangleShape * rect)
 {
-	rect->setSize(sf::Vector2f(vec.getLength() / 4, 3));
+	rect->setSize(sf::Vector2f(vec.getLength() / 100, 3));
 
 	float angle = 360 / (2 * PI)*acos(vec.dot(Vec(1.0f, 0.0f, 0.0f))*(1 / vec.getLength()));
 
