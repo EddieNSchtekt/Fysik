@@ -130,7 +130,6 @@ int main()
 	while (window.isOpen())
 	{
 		t = cl.restart().asSeconds();
-		//t = 0.01;
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -171,11 +170,18 @@ int main()
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
 				{
 					rudderAngle++;
+					if (rudderAngle > 45)
+					{
+						rudderAngle = 45;
+					}
 				}
 
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
 				{
 					rudderAngle--;
+					
+					if(rudderAngle < -45)
+						rudderAngle = -45;
 				}
 			}
 		}
@@ -285,10 +291,10 @@ int main()
 		window.draw(arrow);
 		window.draw(arrow2);
 
-		/*window.draw(l);
+		window.draw(l);
 		window.draw(d);
 		window.draw(kl);
-		window.draw(kd);*/
+		window.draw(kd);
 
 		window.display();
 	}

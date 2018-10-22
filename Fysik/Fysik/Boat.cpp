@@ -53,6 +53,26 @@ Vec Boat::windCalc(Vec trueWind)
 	lift = lift / nomArea;
 	drag = drag / nomArea;
 
+	float mastHeight = 16.9;
+	float aspectRatio = 0;
+	float averageFreeBoard = 1.30;
+
+	float angle = keel->getAngle().dot(apparentWind);
+	angle = angle / (sqrt(apparentWind.getX()*apparentWind.getX() + apparentWind.getY()*apparentWind.getY())*keel->getAngle().getLength());
+	angle = acos(angle) * 360 / (2 * PI);
+	angle = 180 - angle;
+
+	if(angle < 45)
+		aspectRatio = 1.1*(mastHeight + averageFreeBoard);
+	else
+		aspectRatio = 1.1*(mastHeight);
+
+	aspectRatio *= aspectRatio / nomArea;
+
+	float inducedDrag = lift * lift*(1 / (PI*aspectRatio) + 0.005);
+
+	drag += inducedDrag;
+
 	float liftForceLength = 0.5*(float)DENSITY_AIR*lift*sails[0]->area()*(apparentWind).getLength()*(apparentWind).getLength();
 
 	float dragForceLength = 0.5*(float)DENSITY_AIR*drag*sails[0]->area()*(apparentWind).getLength()*(apparentWind).getLength();
@@ -174,9 +194,7 @@ void Boat::rudderRot(float time)
 void Boat::calcForce(float time, Vec trueWind)
 {
 	Vec res = this->windCalc(trueWind) + this->waterDragCalc() + this->rudderCalc() + this->hullResistance();
-	//float durp = keel->getAngle().getX() - keel->getAngle().getY();
 
-	//res = Vec(0.0f, 0.0f, 0.0f);
 	this->rudderRot(time);
 	acc = res * (1 / mass);
 	update(time);
